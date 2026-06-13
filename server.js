@@ -116,34 +116,39 @@ async function initDatabase() {
 // Nodemailer setup
 let transporter;
 let emailConfigured = false;
-try {
-  transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
-    }
-  });
+const emailUser = process.env.EMAIL_USER;
+const emailPass = process.env.EMAIL_PASS;
+console.log(`NODE_ENV=${process.env.NODE_ENV || 'undefined'}`);
+console.log(`RENDER_EXTERNAL_URL=${process.env.RENDER_EXTERNAL_URL || 'undefined'}`);
+console.log(`EMAIL_USER is ${emailUser ? 'set' : 'NOT set'}`);
+console.log(`EMAIL_PASS is ${emailPass ? 'set' : 'NOT set'}`);
+if (!emailUser || !emailPass) {
+  console.warn('⚠️ EMAIL_USER or EMAIL_PASS is missing. Verification emails cannot be sent until these are configured.');
+} else {
+  try {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass
+      }
+    });
 
-  transporter.verify((verifyErr, success) => {
-    if (verifyErr) {
-      console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
-      console.warn('   Check EMAIL_USER and EMAIL_PASS in .env and use a valid Gmail app password.');
-      emailConfigured = false;
-    } else {
-      console.log('✅ Nodemailer configured and ready to send email');
-      emailConfigured = true;
-    }
-  });
-} catch (err) {
-  console.warn('⚠️ Nodemailer not configured - verification emails will not work');
-  console.warn(err.message);
-  emailConfigured = false;
+    transporter.verify((verifyErr, success) => {
+      if (verifyErr) {
+        console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
+        console.warn('   Check EMAIL_USER and EMAIL_PASS in Render dashboard or .env and use a valid Gmail app password from the same account.');
+        emailConfigured = false;
+      } else {
+        console.log('✅ Nodemailer configured and ready to send email');
+        emailConfigured = true;
+      }
+    });
+  } catch (err) {
+    console.warn('⚠️ Nodemailer not configured - verification emails will not work');
+    console.warn(err.message);
+    emailConfigured = false;
+  }
 }
 
 // Book a Consultation — POST /api/contact
@@ -390,8 +395,14 @@ app.post('/api/signup', async (req, res) => {
     // Generate magic link
     const magicLink = `${process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`}/verify/${verificationToken}`;
 
-    // Try to send email, if fails fall back to direct account creation
+    // Try to send email. IMPORTANT: do NOT create the account if email fails
+    // because verification is required for access.
     let emailSent = false;
+    if (!emailConfigured) {
+      console.error('❌ Email is not configured on this server. Aborting signup to enforce verification.');
+      return res.status(500).json({ success: false, message: 'Verification email could not be sent. Please check email configuration and try again.' });
+    }
+
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS && transporter) {
       const mailOptions = {
         from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
@@ -427,9 +438,10 @@ app.post('/api/signup', async (req, res) => {
         console.log('Mail send info:', sendInfo && typeof sendInfo === 'object' ? JSON.stringify(sendInfo) : sendInfo);
         emailSent = true;
       } catch (mailErr) {
-        console.error('❌ Verification email send failed:', mailErr.message);
+        console.error('❌ Verification email send failed:', mailErr && mailErr.message ? mailErr.message : mailErr);
         console.error('Full error:', mailErr);
-        // Fall through to direct account creation
+        // DO NOT create the account automatically — enforce verification.
+        return res.status(500).json({ success: false, message: 'Verification email could not be sent. Please check email configuration and try again.' });
       }
     }
 
@@ -446,21 +458,6 @@ app.post('/api/signup', async (req, res) => {
       };
 
       console.log('Signup route success response (email sent):', responsePayload);
-      res.json(responsePayload);
-    } else {
-      // Fallback: create account directly without email verification
-      await pool.query(`
-        INSERT INTO users (first_name, last_name, login_name, full_name, username, email, phone, password, role)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      `, [firstName.trim(), lastName.trim(), loginName, loginName, loginName, email.trim(), phone.trim(), hashedPassword, role.trim()]);
-
-      const responsePayload = {
-        success: true,
-        message: 'Account created successfully! You can now login.',
-        skipVerification: true
-      };
-
-      console.log('Signup route success response (direct create):', responsePayload);
       res.json(responsePayload);
     }
 
