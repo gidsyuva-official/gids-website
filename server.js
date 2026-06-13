@@ -122,33 +122,69 @@ console.log(`NODE_ENV=${process.env.NODE_ENV || 'undefined'}`);
 console.log(`RENDER_EXTERNAL_URL=${process.env.RENDER_EXTERNAL_URL || 'undefined'}`);
 console.log(`EMAIL_USER is ${emailUser ? 'set' : 'NOT set'}`);
 console.log(`EMAIL_PASS is ${emailPass ? 'set' : 'NOT set'}`);
-if (!emailUser || !emailPass) {
-  console.warn('⚠️ EMAIL_USER or EMAIL_PASS is missing. Verification emails cannot be sent until these are configured.');
-} else {
+
+// Try multiple SMTP ports/configs for Render compatibility
+async function createTransporter(host, port, secure) {
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: { user: emailUser, pass: emailPass },
+    tls: { rejectUnauthorized: false },
+    connectionTimeout: 10000, // 10 seconds timeout
+    greetingTimeout: 10000,
+    socketTimeout: 15000
+  });
+}
+
+async function initializeEmailTransport() {
+  if (!emailUser || !emailPass) {
+    console.warn('⚠️ EMAIL_USER or EMAIL_PASS is missing. Verification emails cannot be sent until these are configured.');
+    emailConfigured = false;
+    return;
+  }
+
+  // Try multiple SMTP configurations in order (Render blocks some ports)
+  const smtpConfigs = [
+    { host: 'smtp.gmail.com', port: 587, secure: false },
+    { host: 'smtp.gmail.com', port: 465, secure: true },
+    { host: 'smtp.gmail.com', port: 25, secure: false }
+  ];
+
+  for (const config of smtpConfigs) {
+    try {
+      const testTransporter = await createTransporter(config.host, config.port, config.secure);
+      await testTransporter.verify();
+      transporter = testTransporter;
+      console.log(`✅ Nodemailer configured on ${config.host}:${config.port} (secure:${config.secure})`);
+      emailConfigured = true;
+      return;
+    } catch (err) {
+      console.warn(`⚠️ SMTP ${config.host}:${config.port} failed:`, err.message);
+    }
+  }
+
+  // If all ports failed, try with service option (Gmail)
   try {
     transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: {
-        user: emailUser,
-        pass: emailPass
-      }
+      auth: { user: emailUser, pass: emailPass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
-
-    transporter.verify((verifyErr, success) => {
-      if (verifyErr) {
-        console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
-        console.warn('   Check EMAIL_USER and EMAIL_PASS in Render dashboard or .env and use a valid Gmail app password from the same account.');
-        emailConfigured = false;
-      } else {
-        console.log('✅ Nodemailer configured and ready to send email');
-        emailConfigured = true;
-      }
-    });
+    await transporter.verify();
+    console.log('✅ Nodemailer configured with Gmail service option');
+    emailConfigured = true;
+    return;
   } catch (err) {
-    console.warn('⚠️ Nodemailer not configured - verification emails will not work');
-    console.warn(err.message);
-    emailConfigured = false;
+    console.warn('⚠️ Gmail service option also failed:', err.message);
   }
+
+  console.warn('❌ All SMTP configurations failed. Email service will be unavailable.');
+  console.warn('   📧 For Render deployment use EMAIL_USER and EMAIL_PASS env vars with Gmail app password.');
+  console.warn('   💡 Make sure to use the app password (16 chars) from your Gmail account, NOT your regular password.');
+  emailConfigured = false;
 }
 
 // Book a Consultation — POST /api/contact
@@ -454,7 +490,7 @@ app.post('/api/signup', async (req, res) => {
 
       const responsePayload = {
         success: true,
-        message: 'Verification email sent to your address. Please check your inbox and click the verification link to complete your registration.'
+        message: 'Verification email sent to your address. Please check your inbox (including Spam/Junk folder) and click the verification link to complete your registration.'
       };
 
       console.log('Signup route success response (email sent):', responsePayload);
@@ -464,6 +500,91 @@ app.post('/api/signup', async (req, res) => {
   } catch (err) {
     console.error('Signup error:', err);
     res.status(500).json({ success: false, message: 'Server error. Could not process signup.' });
+  }
+});
+
+// Resend verification email - POST /api/resend-verification
+app.post('/api/resend-verification', async (req, res) => {
+  try {
+    const email = (req.body.email || '').trim().toLowerCase();
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email address is required.' });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Invalid email address.' });
+    }
+
+    // Check if user is already verified
+    const existingUser = await pool.query('SELECT id FROM users WHERE LOWER(email) = $1', [email]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ success: false, message: 'This email is already verified. Please sign in.' });
+    }
+
+    // Find pending user
+    const pendingResult = await pool.query('SELECT * FROM pending_users WHERE LOWER(email) = $1', [email]);
+    if (pendingResult.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'No pending registration found for this email. Please sign up first.' });
+    }
+
+    const pendingUser = pendingResult.rows[0];
+
+    // Check email configuration
+    if (!emailConfigured || !transporter) {
+      return res.status(500).json({ success: false, message: 'Email service is not configured. Please contact support.' });
+    }
+
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiresMinutes = Number(process.env.VERIFY_LINK_EXPIRES_MINUTES) || 15;
+    const expiresAt = new Date(Date.now() + expiresMinutes * 60 * 1000);
+
+    // Generate magic link
+    const magicLink = `${process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`}/verify/${verificationToken}`;
+
+    // Send email
+    const mailOptions = {
+      from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Verify your GIDS account (Resend)',
+      replyTo: process.env.EMAIL_USER,
+      text: `Welcome to Global India Digital Solution!\n\nHi ${pendingUser.first_name || pendingUser.login_name},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't request this, ignore this message.`,
+      html: `
+        <h1>Welcome to Global India Digital Solution!</h1>
+        <p>Hi ${pendingUser.first_name || pendingUser.login_name},</p>
+        <p>Click the link below to verify your account:</p>
+        <a href="${magicLink}" style="font-size: 18px; padding: 10px 20px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 5px;">Verify Account</a>
+        <p>This link expires in ${expiresMinutes} minutes.</p>
+        <p>If you didn't request this, you can ignore this email.</p>
+      `
+    };
+
+    await new Promise((resolve, reject) => {
+      transporter.sendMail(mailOptions, (mailErr, info) => {
+        if (mailErr) return reject(mailErr);
+        if (info && info.rejected && info.rejected.length > 0) {
+          return reject(new Error(`Email rejected by SMTP server: ${info.rejected.join(', ')}`));
+        }
+        resolve(info);
+      });
+    });
+
+    // Update pending user with new token
+    await pool.query(
+      'UPDATE pending_users SET verification_token = $1, expires_at = $2, created_at = CURRENT_TIMESTAMP WHERE id = $3',
+      [verificationToken, expiresAt, pendingUser.id]
+    );
+
+    console.log(`📧 Resent verification email to ${email}`);
+    res.json({
+      success: true,
+      message: 'A new verification email has been sent. Please check your inbox (including Spam/Junk folder).'
+    });
+
+  } catch (err) {
+    console.error('Resend verification error:', err);
+    res.status(500).json({ success: false, message: 'Failed to resend verification email. Please try again later.' });
   }
 });
 
@@ -618,7 +739,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-initDatabase()
+Promise.all([initDatabase(), initializeEmailTransport()])
   .then(() => {
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
@@ -635,7 +756,7 @@ initDatabase()
     });
   })
   .catch((err) => {
-    console.error('❌ Database connection failed:', err.message);
-    console.error('   Check PostgreSQL is running and .env settings are correct.');
+    console.error('❌ Startup failed:', err.message);
+    console.error('   Check your database and email configuration in Render or .env.');
     process.exit(1);
   });

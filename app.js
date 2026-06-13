@@ -282,28 +282,22 @@ async function handleSignup() {
     btn.disabled = false;
 
     if (data.success) {
-      if (data.skipVerification) {
-        // Account created directly, go to login
-        successEl.classList.remove('hidden');
-        successEl.innerHTML = `
-          <strong>${data.message}</strong>
-          <div style="margin-top:10px;font-size:0.95rem;color:#1f2937;">
-            Redirecting to login page...
-          </div>
-        `;
-        setTimeout(() => {
-          showPage('page-login');
-        }, 2000);
-      } else {
-        // Email sent, show verification message
-        successEl.classList.remove('hidden');
-        successEl.innerHTML = `
-          <strong>${data.message}</strong>
-          <div style="margin-top:10px;font-size:0.95rem;color:#1f2937;">
-            Please check your inbox for the verification email. Open the email and click the link to complete verification before accessing the dashboard.
-          </div>
-        `;
-      }
+      const signedUpEmail = document.getElementById('su-email').value.trim();
+      
+      // Email sent, show verification message with resend option
+      successEl.classList.remove('hidden');
+      successEl.innerHTML = `
+        <strong>${data.message}</strong>
+        <div style="margin-top:12px;font-size:0.95rem;color:#1f2937;line-height:1.6;">
+          <p style="margin:0 0 8px 0;">✉️ We've sent a verification email to <strong>${escapeHtml(signedUpEmail)}</strong>.</p>
+          <p style="margin:0 0 8px 0;">⚠️ <strong>Didn't get the email?</strong> Check your <strong>Spam/Junk</strong> folder.</p>
+          <p style="margin:0 0 12px 0;">If you still don't see it, click the button below to resend.</p>
+          <button onclick="resendVerification('${escapeHtml(signedUpEmail)}')" style="background:#1a1a8e;color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:0.95rem;">
+            🔄 Resend Verification Email
+          </button>
+          <div id="resend-status" style="margin-top:8px;font-size:0.9rem;"></div>
+        </div>
+      `;
       // Clear form
       document.getElementById('su-first').value = '';
       document.getElementById('su-last').value = '';
@@ -320,6 +314,38 @@ async function handleSignup() {
     btn.textContent = 'Create Account →';
     btn.disabled = false;
     alert('Could not connect to server. Please run the backend (npm start) and try again.');
+  }
+}
+
+/**
+ * Resend verification email
+ */
+async function resendVerification(email) {
+  const statusEl = document.getElementById('resend-status');
+  if (!statusEl) return;
+  
+  statusEl.innerHTML = '⏳ Sending...';
+  statusEl.style.color = '#6b7280';
+  
+  try {
+    const response = await fetch('/api/resend-verification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      statusEl.innerHTML = '✅ ' + data.message;
+      statusEl.style.color = '#059669';
+    } else {
+      statusEl.innerHTML = '❌ ' + (data.message || 'Failed to resend. Please try again.');
+      statusEl.style.color = '#dc2626';
+    }
+  } catch (err) {
+    statusEl.innerHTML = '❌ Could not connect to server. Please try again later.';
+    statusEl.style.color = '#dc2626';
   }
 }
 
