@@ -390,66 +390,79 @@ app.post('/api/signup', async (req, res) => {
     // Generate magic link
     const magicLink = `${process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`}/verify/${verificationToken}`;
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !transporter) {
-      return res.status(500).json({
-        success: false,
-        message: 'Email verification is not configured. Please contact the administrator to enable email delivery.'
-      });
-    }
+    // Try to send email, if fails fall back to direct account creation
+    let emailSent = false;
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASS && transporter) {
+      const mailOptions = {
+        from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: 'Verify your GIDS account',
+        replyTo: process.env.EMAIL_USER,
+        text: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`,
+        html: `
+          <h1>Welcome to Global India Digital Solution!</h1>
+          <p>Hi ${firstName || loginName},</p>
+          <p>Click the link below to verify your account:</p>
+          <a href="${magicLink}" style="font-size: 18px; padding: 10px 20px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 5px;">Verify Account</a>
+          <p>This link expires in ${expiresMinutes} minutes.</p>
+          <p>If you didn't create this account, you can ignore this email.</p>
+        `
+      };
 
-    const mailOptions = {
-      from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Verify your GIDS account',
-      replyTo: process.env.EMAIL_USER,
-      text: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`,
-      html: `
-        <h1>Welcome to Global India Digital Solution!</h1>
-        <p>Hi ${firstName || loginName},</p>
-        <p>Click the link below to verify your account:</p>
-        <a href="${magicLink}" style="font-size: 18px; padding: 10px 20px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 5px;">Verify Account</a>
-        <p>This link expires in ${expiresMinutes} minutes.</p>
-        <p>If you didn't create this account, you can ignore this email.</p>
-      `
-    };
-
-    try {
-      let sendInfo;
-      await new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (mailErr, info) => {
-          if (mailErr) {
-            return reject(mailErr);
-          }
-          if (info && info.rejected && info.rejected.length > 0) {
-            return reject(new Error(`Email rejected by SMTP server: ${info.rejected.join(', ')}`));
-          }
-          sendInfo = info;
-          resolve(info);
+      try {
+        let sendInfo;
+        await new Promise((resolve, reject) => {
+          transporter.sendMail(mailOptions, (mailErr, info) => {
+            if (mailErr) {
+              return reject(mailErr);
+            }
+            if (info && info.rejected && info.rejected.length > 0) {
+              return reject(new Error(`Email rejected by SMTP server: ${info.rejected.join(', ')}`));
+            }
+            sendInfo = info;
+            resolve(info);
+          });
         });
-      });
-      console.log(`📧 Verification email sent to ${email}`);
-      console.log('Mail send info:', sendInfo && typeof sendInfo === 'object' ? JSON.stringify(sendInfo) : sendInfo);
-    } catch (mailErr) {
-      console.error('Verification email send failed:', mailErr.message);
-      return res.status(500).json({
-        success: false,
-        message: 'Verification email could not be sent. Please check email configuration and try again.'
-      });
+        console.log(`📧 Verification email sent to ${email}`);
+        console.log('Mail send info:', sendInfo && typeof sendInfo === 'object' ? JSON.stringify(sendInfo) : sendInfo);
+        emailSent = true;
+      } catch (mailErr) {
+        console.error('❌ Verification email send failed:', mailErr.message);
+        console.error('Full error:', mailErr);
+        // Fall through to direct account creation
+      }
     }
 
-    // Save to pending_users after email is successfully queued
-    await pool.query(`
-      INSERT INTO pending_users (first_name, last_name, login_name, full_name, username, email, phone, password, role, verification_token, expires_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-    `, [firstName.trim(), lastName.trim(), loginName, loginName, loginName, email.trim(), phone.trim(), hashedPassword, role.trim(), verificationToken, expiresAt]);
+    if (emailSent) {
+      // Save to pending_users after email is successfully queued
+      await pool.query(`
+        INSERT INTO pending_users (first_name, last_name, login_name, full_name, username, email, phone, password, role, verification_token, expires_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      `, [firstName.trim(), lastName.trim(), loginName, loginName, loginName, email.trim(), phone.trim(), hashedPassword, role.trim(), verificationToken, expiresAt]);
 
-    const responsePayload = {
-      success: true,
-      message: 'Verification email sent to your address. Please check your inbox and click the verification link to complete your registration.'
-    };
+      const responsePayload = {
+        success: true,
+        message: 'Verification email sent to your address. Please check your inbox and click the verification link to complete your registration.'
+      };
 
-    console.log('Signup route success response:', responsePayload);
-    res.json(responsePayload);
+      console.log('Signup route success response (email sent):', responsePayload);
+      res.json(responsePayload);
+    } else {
+      // Fallback: create account directly without email verification
+      await pool.query(`
+        INSERT INTO users (first_name, last_name, login_name, full_name, username, email, phone, password, role)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `, [firstName.trim(), lastName.trim(), loginName, loginName, loginName, email.trim(), phone.trim(), hashedPassword, role.trim()]);
+
+      const responsePayload = {
+        success: true,
+        message: 'Account created successfully! You can now login.',
+        skipVerification: true
+      };
+
+      console.log('Signup route success response (direct create):', responsePayload);
+      res.json(responsePayload);
+    }
 
   } catch (err) {
     console.error('Signup error:', err);

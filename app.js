@@ -282,13 +282,28 @@ async function handleSignup() {
     btn.disabled = false;
 
     if (data.success) {
-      successEl.classList.remove('hidden');
-      successEl.innerHTML = `
-        <strong>${data.message}</strong>
-        <div style="margin-top:10px;font-size:0.95rem;color:#1f2937;">
-          Please check your inbox for the verification email. Open the email and click the link to complete verification before accessing the dashboard.
-        </div>
-      `;
+      if (data.skipVerification) {
+        // Account created directly, go to login
+        successEl.classList.remove('hidden');
+        successEl.innerHTML = `
+          <strong>${data.message}</strong>
+          <div style="margin-top:10px;font-size:0.95rem;color:#1f2937;">
+            Redirecting to login page...
+          </div>
+        `;
+        setTimeout(() => {
+          showPage('page-login');
+        }, 2000);
+      } else {
+        // Email sent, show verification message
+        successEl.classList.remove('hidden');
+        successEl.innerHTML = `
+          <strong>${data.message}</strong>
+          <div style="margin-top:10px;font-size:0.95rem;color:#1f2937;">
+            Please check your inbox for the verification email. Open the email and click the link to complete verification before accessing the dashboard.
+          </div>
+        `;
+      }
       // Clear form
       document.getElementById('su-first').value = '';
       document.getElementById('su-last').value = '';
