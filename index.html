@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global India Digital Solution</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body>
+  <!-- SVG Gradient Definitions -->
+  <svg style="display: none;">
+    <defs>
+      <linearGradient id="igGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#feda75"/>
+        <stop offset="25%" stop-color="#fa7e1e"/>
+        <stop offset="50%" stop-color="#d62976"/>
+        <stop offset="75%" stop-color="#962fbf"/>
+        <stop offset="100%" stop-color="#4f5bd5"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============================================================
+     PAGE 1 — LOGIN PAGE
+     ============================================================ -->
+
+  <div id="page-login" class="page active">
+    <div class="auth-bg">
+      <div class="auth-bg-shape s1"></div>
+      <div class="auth-bg-shape s2"></div>
+    </div>
+    <div class="auth-wrapper auth-wrapper-split">
+      <!-- Left: Login Form -->
+      <div class="auth-panel">
+        <div class="auth-logo">
+          <div class="auth-logo-icon">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--auth" />
+          </div>
+          <div class="auth-logo-text">
+            <span class="alm">Global India Digital Solution</span>
+            <span class="als">Education · Training · Business</span>
+          </div>
+        </div>
+
+        <h2 class="auth-heading">Welcome Back</h2>
+        <p class="auth-subheading">Sign in to continue your journey</p>
+
+        <div id="login-error" class="auth-error hidden">Invalid username or password.</div>
+
+        <div class="auth-form">
+          <div class="field-group">
+            <label class="field-label">Username / Email</label>
+            <input type="text" id="login-username" class="field-input" placeholder="First name + initial or email" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <div class="field-pw-wrap">
+              <input type="password" id="login-password" class="field-input" placeholder="Enter your password" />
+              <button class="pw-toggle" onclick="togglePw('login-password',this)">👁</button>
+            </div>
+          </div>
+
+          <div class="auth-tos">
+            <input type="checkbox" id="login-tos" />
+            <label for="login-tos">I agree to the <a href="#" class="tos-link">Terms & Conditions</a> and <a
+                href="#" class="tos-link">Privacy Policy</a></label>
+          </div>
+
+          <button class="btn-primary auth-btn" onclick="handleLogin()">Sign In →</button>
+
+          <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('page-signup')"
+              class="auth-link">Sign Up</a></p>
+        </div>
+      </div>
+      
+      <!-- Right: Sidebar with Hey, Hello! -->
+      <div class="auth-sidebar">
+        <div class="auth-sidebar-content">
+          <h1 class="auth-sidebar-text" id="auth-sidebar-text"></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     PAGE 3 — SIGN UP PAGE
+     ============================================================ -->
+  <div id="page-signup" class="page">
+    <div class="auth-bg">
+      <div class="auth-bg-shape s1"></div>
+      <div class="auth-bg-shape s2"></div>
+    </div>
+    <div class="auth-wrapper auth-wrapper-split">
+      <div class="auth-panel auth-panel-wide">
+        <div class="auth-logo">
+          <div class="auth-logo-icon">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--auth" />
+          </div>
+          <div class="auth-logo-text">
+            <span class="alm">Global India Digital Solution</span>
+            <span class="als">Education · Training · Business</span>
+          </div>
+        </div>
+
+        <h2 class="auth-heading">Create Account</h2>
+        <p class="auth-subheading">Join thousands of learners and professionals</p>
+
+        <div id="signup-success" class="auth-success hidden"></div>
+
+        <div class="auth-form signup-grid">
+          <div class="field-group">
+            <label class="field-label">First Name</label>
+            <input type="text" id="su-first" class="field-input" placeholder="Your first name" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Last Name</label>
+            <input type="text" id="su-last" class="field-input" placeholder="Your last name initial" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input type="email" id="su-email" class="field-input" placeholder="your@email.com" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Phone Number</label>
+            <input type="tel" id="su-phone" class="field-input" placeholder="+91 00000 00000" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <div class="field-pw-wrap">
+              <input type="password" id="su-password" class="field-input" placeholder="Create a strong password" />
+              <button class="pw-toggle" onclick="togglePw('su-password',this)">👁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Confirm Password</label>
+            <div class="field-pw-wrap">
+              <input type="password" id="su-confirm" class="field-input" placeholder="Repeat password" />
+              <button class="pw-toggle" onclick="togglePw('su-confirm',this)">👁</button>
+            </div>
+          </div>
+          <div class="field-group full-width">
+            <label class="field-label">I am a</label>
+            <select id="su-role" class="field-input">
+              <option value="">Select your role</option>
+              <option>Student</option>
+              <option>Professional</option>
+              <option>Business Owner</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field-group full-width">
+            <div class="auth-tos">
+              <input type="checkbox" id="su-tos" />
+              <label for="su-tos">I agree to the <a href="#" class="tos-link">Terms & Conditions</a> and <a href="#"
+                  class="tos-link">Privacy Policy</a></label>
+            </div>
+          </div>
+          <div class="field-group full-width">
+            <button class="btn-primary auth-btn" onclick="handleSignup()">Create Account →</button>
+            <p class="auth-switch" style="margin-top:14px">Already have an account? <a href="#"
+                onclick="showPage('page-login')" class="auth-link">Sign In</a></p>
+          </div>
+        </div>
+      </div>
+      <!-- Right: Sidebar with Glad To See You -->
+      <div class="auth-sidebar">
+        <div class="auth-sidebar-content">
+          <h1 class="auth-sidebar-text typewriter-line" id="tw-line1">Glad</h1>
+          <h1 class="auth-sidebar-text typewriter-line" id="tw-line2">To See You</h1>
+          <p class="auth-sidebar-subtext typewriter-line" id="tw-line3">Don't Have An Account? Create Your Account, It Take Less Than A Minute</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+     PAGE 4 — DASHBOARD (HOME)
+     ============================================================ -->
+  <div id="page-dashboard" class="page">
+
+    <!-- Scrolling Ad Banner -->
+    <div class="ad-banner">
+      <div class="ad-track">
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 NEET · JEE · CA · CMA Batch Starting Soon — Limited Seats! &nbsp;|&nbsp; 🖥️ TallyPrime with AI —
+          Enroll Now &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 GST Registration · Income Tax Filing · Business Audit Services &nbsp;|&nbsp; 💼 Skill Development
+          Programs Open &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 1200+ Students Trained · 100+ Businesses Served · 98% Satisfaction &nbsp;&nbsp;&nbsp;</span>
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 NEET · JEE · CA · CMA Batch Starting Soon — Limited Seats! &nbsp;|&nbsp; 🖥️ TallyPrime with AI —
+          Enroll Now &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 GST Registration · Income Tax Filing · Business Audit Services &nbsp;|&nbsp; 💼 Skill Development
+          Programs Open &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 1200+ Students Trained · 100+ Businesses Served · 98% Satisfaction &nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="main-nav" id="dash-nav">
+      <div class="nav-logo" onclick="showPage('page-dashboard')">
+        <div class="nav-logo-icon">
+          <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--nav" />
+        </div>
+        <div class="nav-logo-text">
+          <span class="nlm">Global India Digital Solution</span>
+          <span class="nls">Education · Training · Business</span>
+        </div>
+      </div>
+      <ul class="nav-links" id="dash-nav-links">
+        <li><a href="#" class="nav-link active" onclick="showPage('page-dashboard');return false;">Home</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-training');return false;">Training</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-services');return false;">Services</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+        <li><a href="#" class="nav-link logout-link" onclick="handleLogout();return false;">Logout</a></li>
+      </ul>
+      <button class="hamburger" onclick="toggleNav('dash-nav-links')">☰</button>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="dash-hero">
+      <div class="hero-bg-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-tag">India's Most Trusted Education & Business Platform</div>
+        <h1 class="hero-title">
+          Learning, Accounting, and Business<br />
+          <span class="hero-accent">Solutions in One Platform</span>
+        </h1>
+        <p class="hero-desc">
+          Your trusted partner for commerce education, professional training,
+          audit services, and accounting software solutions
+        </p>
+        <div class="hero-btns">
+          <button class="btn-white" onclick="goToTrainingCourses()">Enroll Course</button>
+          <button class="btn-gradient"
+            onclick="document.getElementById('contact-section').scrollIntoView({behavior:'smooth'})">Book a
+            Consultation</button>
+        </div>
+      </div>
+      <div class="hero-cards">
+        <div class="hero-card" onclick="showPage('page-training')">
+          <div class="hero-card-icon">🎓</div>
+          <div class="hero-card-title">Exam Coaching</div>
+          <div class="hero-card-desc">NEET, JEE, CA, CMA and more</div>
+        </div>
+        <div class="hero-card" onclick="showPage('page-training')">
+          <div class="hero-card-icon">🖥️</div>
+          <div class="hero-card-title">Skill Development</div>
+          <div class="hero-card-desc">Practical training & internships</div>
+        </div>
+        <div class="hero-card" onclick="showPage('page-services')">
+          <div class="hero-card-icon">📋</div>
+          <div class="hero-card-title">Audit and Tax Services</div>
+          <div class="hero-card-desc">GST, Income Tax & Financial Audit</div>
+        </div>
+        <div class="hero-card" onclick="showPage('page-services')">
+          <div class="hero-card-icon">🧮</div>
+          <div class="hero-card-title">Tally Prime</div>
+          <div class="hero-card-desc">Sales, Support & Training</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="why-section">
+      <h2 class="section-title">Why Choose <span class="accent-red">Global India Digital Solution</span>?</h2>
+      <p class="section-sub">Everything you need for learning and business success in one place.</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">👥</div>
+          <div class="why-title">Small Batch Size</div>
+          <div class="why-desc">8–12 students per batch for personalized attention</div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🏆</div>
+          <div class="why-title">Expert Mentorship</div>
+          <div class="why-desc">Learn from experienced trainers and professionals</div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🌐</div>
+          <div class="why-title">All-in-One Platform</div>
+          <div class="why-desc">Education, consulting, and software services together</div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">⚡</div>
+          <div class="why-title">Practical Skills</div>
+          <div class="why-desc">Project-based learning and internship opportunities</div>
+        </div>
+      </div>
+      <div class="audience-tabs">
+        <div class="audience-tab tab-students">
+          <div class="tab-label">For Students</div>
+          <div class="tab-desc">School & college students, professional course aspirants</div>
+        </div>
+        <div class="audience-tab tab-professionals">
+          <div class="tab-label">For Professionals</div>
+          <div class="tab-desc">Commerce graduates, accountants, tax practitioners</div>
+        </div>
+        <div class="audience-tab tab-business">
+          <div class="tab-label">For Businesses</div>
+          <div class="tab-desc">SMEs, startups, organizations needing financial support</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+      <h2 class="section-title">What Our Clients <span class="accent-red">Say</span></h2>
+      <p class="section-sub">Success stories from students, professionals, and businesses we've helped</p>
+      <br />
+      
+      <div class="testimonial-grid" id="testimonial-grid">
+        <div class="testi-card testi-add-card" onclick="openReviewForm()" role="button" tabindex="0">
+          <div class="testi-header">
+            <div class="testi-avatar">+</div>
+            <div>
+              <div class="testi-name">Add Your Review</div>
+              <div class="testi-role">Share your experience</div>
+            </div>
+          </div>
+          <p class="testi-text" style="text-align: center; margin-top: 16px;">Tap to add your review with star rating.</p>
+        </div>
+      </div>
+    </section>
+
+    <div id="review-modal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeReviewForm()">✕</button>
+        <h2 class="modal-title">Post a Review</h2>
+        <p class="modal-sub">Tell us what you liked and give a star rating for our coaching or services.</p>
+        <div class="modal-form">
+          <div class="modal-left">
+            <div class="field-group"><label class="field-label">Name</label><input type="text" id="review-name" class="field-input" placeholder="Your name" /></div>
+            <div class="field-group"><label class="field-label">Role</label><input type="text" id="review-role" class="field-input" placeholder="Student / Professional / Business Owner" /></div>
+            <div class="field-group"><label class="field-label">Email</label><input type="email" id="review-email" class="field-input" placeholder="your@email.com" /></div>
+            <div class="field-group"><label class="field-label">Rating</label>
+              <div id="review-stars" class="star-row" style="display:flex;gap:6px;font-size:1.3rem;cursor:pointer;">
+                <span onclick="setReviewRating(1)">☆</span>
+                <span onclick="setReviewRating(2)">☆</span>
+                <span onclick="setReviewRating(3)">☆</span>
+                <span onclick="setReviewRating(4)">☆</span>
+                <span onclick="setReviewRating(5)">☆</span>
+              </div>
+            </div>
+            <div class="field-group"><label class="field-label">Review</label><textarea id="review-comment" class="field-input field-textarea" placeholder="Share your review here..."></textarea></div>
+            <div class="actions" style="margin-top:12px;">
+              <button class="btn-gradient auth-btn" onclick="submitReview()">Submit Review →</button>
+              <div id="review-success" class="auth-success hidden">✅ Review submitted! It will appear on the dashboard shortly.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section">
+      <h2 class="section-title">Frequently Asked <span class="accent-red">Questions</span></h2>
+      <p class="section-sub">Find answers to common questions about our services and programs</p>
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What is the batch size for courses?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">We maintain small batch sizes of 8 to 12 students to ensure personalized attention and
+            better learning outcomes for each student.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Do you offer both online and offline classes?</span> <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">Yes! We offer both online live classes with recorded sessions and traditional offline
+            classroom coaching with practical workshops and labs.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What courses do you offer?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">We offer NEET, JEE, CA, CMA coaching; Tally Prime with AI; Accounting & Financial
+            Management; Computer & Business Software; Career Development Workshops; and Internship-based programs.
+          </div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What professional services do you provide?</span> <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">We offer Income Tax Filing, GST Registration & Return Filing, Business Financial Audit,
+            Accounting & Bookkeeping, and Compliance & Financial Advisory services.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Do you provide Tally Prime training?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">Yes, we provide comprehensive Tally Prime training for accountants and staff members,
+            including installation, configuration, and business customization support.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>How can I enroll for a course?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">You can enroll directly through our Training page by clicking the Enroll button on any
+            course card, or call us at +91 63 74 66 94 86 for guidance.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>Do you offer internship opportunities?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">Yes! Our Skill Development programs include project-based learning and internship
+            opportunities with partner businesses and organizations.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q"><span>What makes your platform different?</span> <span class="faq-arrow">▾</span></div>
+          <div class="faq-a">We combine education, professional training, audit services, and accounting software under
+            one roof — so you don't need to visit multiple platforms. We also maintain small batches for personal
+            attention.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section" id="contact-section">
+      <h2 class="section-title">Get In <span class="accent-red">Touch</span></h2>
+      <p class="section-sub">Have questions? We're here to help. Reach out for courses, services, or any inquiries</p>
+      <div class="contact-grid">
+        <div class="contact-info-col">
+          <div class="contact-card">
+            <h3 class="contact-card-title">Contact Information</h3>
+            <div class="contact-item">
+              <span class="contact-ico">📞</span>
+              <div>
+                <div class="ci-label">Phone</div>
+                <div class="ci-val">+91 63 74 66 94 86</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-ico">✉️</span>
+              <div>
+                <div class="ci-label">Email</div>
+                <div class="ci-val">gids.yuva@gmail.com</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-ico">📍</span>
+              <div>
+                <div class="ci-label">Address</div>
+                <div class="ci-val">169/117B, Bhavani Main Road, Thalavaipettai, Erode-638 312</div>
+              </div>
+            </div>
+          </div>
+          <div class="office-hours-card">
+            <h3 class="oh-title">Office Hours</h3>
+            <div class="oh-row"><span>Monday – Saturday:</span><span>9:00 AM – 6:00 PM</span></div>
+            <div class="oh-row"><span>Sunday:</span><span>Closed</span></div>
+          </div>
+        </div>
+        <div class="contact-form-col">
+          <div class="contact-form-card">
+            <h3 class="contact-card-title">Send Us a Message</h3>
+            <div class="contact-form">
+              <div class="field-group"><label class="field-label">Name</label><input type="text" id="contact-name"
+                  class="field-input" placeholder="Your name" /></div>
+              <div class="field-group"><label class="field-label">Email</label><input type="email" id="contact-email"
+                  class="field-input" placeholder="your@email.com" /></div>
+              <div class="field-group"><label class="field-label">Phone</label><input type="tel" id="contact-phone"
+                  class="field-input" placeholder="+91 63 74 66 94 86" /></div>
+              <div class="field-group">
+                <label class="field-label">Service Interest</label>
+                <select id="contact-service" class="field-input">
+                  <option value="">Select a service</option>
+                  <option>Exam Coaching</option>
+                  <option>Skill Development</option>
+                  <option>Audit and Tax Services</option>
+                  <option>Tally Prime</option>
+                  <option>General Inquiry</option>
+                </select>
+              </div>
+              <div class="field-group"><label class="field-label">Message</label><textarea id="contact-message"
+                  class="field-input field-textarea" placeholder="Tell us how we can help you..."></textarea></div>
+              <button class="btn-gradient send-btn" onclick="handleContact()">Send Message ✈</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location -->
+    <section class="location-section">
+      <h2 class="section-title">Find <span class="accent-red">Us</span></h2>
+      <div class="location-card">
+        <div class="location-info">
+          <div class="loc-item"><span class="loc-icon">📍</span>
+            <div>
+              <div class="loc-label">Our Office</div>
+              <div class="loc-val">169/117B, Bhavani Main Road, Thalavaipettai, Erode – 638 312, Tamil Nadu, India</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">📞</span>
+            <div>
+              <div class="loc-label">Phone</div>
+              <div class="loc-val">+91 63 74 66 94 86</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">✉️</span>
+            <div>
+              <div class="loc-label">Email</div>
+              <div class="loc-val">gids.yuva@gmail.com</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">🕐</span>
+            <div>
+              <div class="loc-label">Office Hours</div>
+              <div class="loc-val">Mon – Sat: 9:00 AM – 6:00 PM</div>
+              <div class="loc-val">Sunday: Closed</div>
+            </div>
+          </div>
+        </div>
+        <div class="location-cta">
+          <h3>Ready to Join Us?</h3>
+          <p>Whether you're a student, professional, or business owner — we're here to help you succeed.</p>
+          <button class="btn-gradient" onclick="showPage('page-training')">Explore Courses →</button>
+          <button class="btn-outline" onclick="showPage('page-services')">View Services →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo-wrap">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--footer" />
+            <div><span class="footer-logo-main">Global India Digital</span><span class="footer-logo-sub">Solution</span>
+            </div>
+          </div>
+          <p class="footer-tagline">Your trusted platform for commerce education, professional training, and financial
+            services.</p>
+          <div class="footer-socials">
+            <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            </a>
+            <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512">
+                <defs>
+                  <linearGradient id="igGradientFooter" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#feda75"/>
+                    <stop offset="25%" stop-color="#fa7e1e"/>
+                    <stop offset="50%" stop-color="#d62976"/>
+                    <stop offset="75%" stop-color="#962fbf"/>
+                    <stop offset="100%" stop-color="#4f5bd5"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#igGradientFooter)"
+                  d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-dashboard');return false;">Home</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Services</a></li>
+            <li><a href="#" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Our Services</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-training');return false;">Exam Coaching</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Skill Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Audit and Taxation Services</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Tally Prime</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact Info</div>
+          <ul class="footer-links footer-contact-links">
+            <li>📍 169/117B, Bhavani Main Road, Thalavaipettai, Erode-638 312</li>
+            <li>📞 +91 63 74 66 94 86</li>
+            <li>✉️ gids.yuva@gmail.com</li>
+          </ul>
+        </div>
+        <div id="footer-socials-mobile">
+          <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </a>
+          <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 448 512">
+              <defs>
+                <linearGradient id="instagramGradient1" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#feda75"/>
+                  <stop offset="25%" stop-color="#fa7e1e"/>
+                  <stop offset="50%" stop-color="#d62976"/>
+                  <stop offset="75%" stop-color="#962fbf"/>
+                  <stop offset="100%" stop-color="#4f5bd5"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#instagramGradient1)"
+                d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Global India Digital Solution. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+     PAGE 5 — TRAINING PAGE
+     ============================================================ -->
+  <div id="page-training" class="page">
+
+    <div class="ad-banner">
+      <div class="ad-track">
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 NEET · JEE · CA · CMA Batch Starting Soon — Limited Seats! &nbsp;|&nbsp; 🖥️ TallyPrime with AI —
+          Enroll Now &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 Online & Offline Learning Modes Available &nbsp;|&nbsp; 💼 Internship Programs Open for Enrollment
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ Expert Faculty · Small Batches · Certified Programs &nbsp;&nbsp;&nbsp;</span>
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 NEET · JEE · CA · CMA Batch Starting Soon — Limited Seats! &nbsp;|&nbsp; 🖥️ TallyPrime with AI —
+          Enroll Now &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 Online & Offline Learning Modes Available &nbsp;|&nbsp; 💼 Internship Programs Open for Enrollment
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ Expert Faculty · Small Batches · Certified Programs &nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+    <nav class="main-nav" id="train-nav">
+      <div class="nav-logo" onclick="showPage('page-dashboard')">
+        <div class="nav-logo-icon">
+          <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--nav" />
+        </div>
+        <div class="nav-logo-text">
+          <span class="nlm">Global India Digital Solution</span>
+          <span class="nls">Education · Training · Business</span>
+        </div>
+      </div>
+      <ul class="nav-links" id="train-nav-links">
+        <li><a href="#" class="nav-link" onclick="showPage('page-dashboard');return false;">Home</a></li>
+        <li><a href="#" class="nav-link active">Training</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-services');return false;">Services</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+        <li><a href="#" class="nav-link logout-link" onclick="handleLogout();return false;">Logout</a></li>
+      </ul>
+      <button class="hamburger" onclick="toggleNav('train-nav-links')">☰</button>
+    </nav>
+
+    <section class="inner-hero training-hero">
+      <div class="inner-hero-content">
+        <div class="inner-hero-tag">Education & Professional Training</div>
+        <h1 class="inner-hero-title">Our <span class="hero-accent">Training Programs</span></h1>
+        <p class="inner-hero-desc">World-class coaching with small batches, expert mentors, and a focus on real outcomes
+        </p>
+      </div>
+    </section>
+
+    <!-- Section A: Exam Coaching -->
+    <section id="exam-coaching-section" class="training-section exam-coaching-section">
+      <div class="ts-header">
+        <div class="ts-tag">Section A</div>
+        <h2 class="ts-title">Exam <span class="accent-red">Coaching</span></h2>
+        <p class="ts-sub">Comprehensive preparation for competitive and professional exams</p>
+      </div>
+      <div class="course-features-banner">
+        <div class="cf-item"><span class="cf-icon">🎥</span> Live & Recorded Classes</div>
+        <div class="cf-item"><span class="cf-icon">📖</span> Study Materials & Notes</div>
+        <div class="cf-item"><span class="cf-icon">📝</span> Practice Tests</div>
+        <div class="cf-item"><span class="cf-icon">🏆</span> Expert Mentorship</div>
+        <div class="cf-item"><span class="cf-icon">👥</span> 8–12 Students Per Batch</div>
+        <div class="cf-item"><span class="cf-icon">📊</span> Progress Tracking</div>
+      </div>
+      <div class="course-grid">
+        <div class="course-card course-card--neet">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">🔬</div>
+            <span class="course-badge badge-medical">Medical</span>
+          </div>
+          <h3 class="course-name">NEET Coaching</h3>
+          <p class="course-desc">Complete preparation for National Eligibility cum Entrance Test for medical admissions.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> 600+ hours of live classes</li>
+            <li><span class="check">✓</span> NCERT-based + advanced material</li>
+            <li><span class="check">✓</span> Weekly mock tests & analysis</li>
+            <li><span class="check">✓</span> Previous year paper solutions</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> 1 Year Program</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> 8–12 Students</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('NEET Coaching')">Enroll Now</button>
+        </div>
+        <div class="course-card course-card--jee">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">⚙️</div>
+            <span class="course-badge badge-engineering">Engineering</span>
+          </div>
+          <h3 class="course-name">JEE Coaching</h3>
+          <p class="course-desc">Intensive coaching for JEE Main and JEE Advanced for IIT and NIT admissions.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> 550+ hours of live classes</li>
+            <li><span class="check">✓</span> Advanced problem-solving techniques</li>
+            <li><span class="check">✓</span> Weekly full mock tests</li>
+            <li><span class="check">✓</span> IIT-level advanced modules</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> 1 Year Program</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> 8–12 Students</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('JEE Coaching')">Enroll Now</button>
+        </div>
+        <div class="course-card course-card--ca">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">📑</div>
+            <span class="course-badge badge-ca">CA Foundation</span>
+          </div>
+          <h3 class="course-name">Chartered Accountant (CA)</h3>
+          <p class="course-desc">Expert coaching for CA Foundation, Intermediate and Final examinations.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> 450+ hours of live classes</li>
+            <li><span class="check">✓</span> All CA levels — Foundation to Final</li>
+            <li><span class="check">✓</span> Practical case studies</li>
+            <li><span class="check">✓</span> Career guidance & articleship support</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> 2 Year Program</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> 10–15 Students</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('CA Coaching')">Enroll Now</button>
+        </div>
+        <div class="course-card course-card--cma">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">📈</div>
+            <span class="course-badge badge-professional">Professional</span>
+          </div>
+          <h3 class="course-name">CMA Coaching</h3>
+          <p class="course-desc">Structured preparation for Cost and Management Accountant exams by ICMAI.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> 400+ hours of live classes</li>
+            <li><span class="check">✓</span> Foundation, Inter & Final levels</li>
+            <li><span class="check">✓</span> Costing & Financial Management focus</li>
+            <li><span class="check">✓</span> Industry-experienced trainers</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> 1.5 Year Program</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> 10–15 Students</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('CMA Coaching')">Enroll Now</button>
+        </div>
+        <div class="course-card course-card--tally">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">🖥️</div>
+            <span class="course-badge badge-software">Software + AI</span>
+          </div>
+          <h3 class="course-name">TallyPrime with AI</h3>
+          <p class="course-desc">Master TallyPrime software with AI-powered features for modern accounting.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> 120+ hours of hands-on training</li>
+            <li><span class="check">✓</span> GST billing & compliance</li>
+            <li><span class="check">✓</span> AI-assisted data entry & reports</li>
+            <li><span class="check">✓</span> Certification on completion</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> 3 Month Program</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> Flexible Batch</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('TallyPrime with AI')">Enroll Now</button>
+        </div>
+        <div class="course-card course-card--more">
+          <div class="course-card-header">
+            <div class="course-icon-wrap">🌟</div>
+            <span class="course-badge badge-upcoming">Upcoming</span>
+          </div>
+          <h3 class="course-name">More Courses</h3>
+          <p class="course-desc">New programs being added — Digital Marketing, Data Analytics, and more certifications.</p>
+          <ul class="course-features">
+            <li class="feature-highlight"><span class="check">✓</span> Digital Marketing Certification</li>
+            <li><span class="check">✓</span> Data Analytics & Excel Advanced</li>
+            <li><span class="check">✓</span> Python for Finance</li>
+            <li><span class="check">✓</span> Personality Development</li>
+          </ul>
+          <div class="course-meta">
+            <span class="course-meta-tag"><span class="meta-icon">📅</span> Coming Soon</span>
+            <span class="course-meta-tag"><span class="meta-icon">👥</span> Join Waitlist</span>
+          </div>
+          <button class="btn-enroll" onclick="openEnroll('Upcoming Course Interest')">Express Interest</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section B: Skill Development -->
+    <section class="training-section skill-section">
+      <div class="ts-header">
+        <div class="ts-tag">Section B</div>
+        <h2 class="ts-title">Skill <span class="accent-red">Development</span></h2>
+        <p class="ts-sub">Build practical, career-ready skills for today's competitive world</p>
+      </div>
+      <div class="skill-grid">
+        <div class="skill-card">
+          <div class="skill-icon">💰</div>
+          <h3 class="skill-name">Accounting & Financial Management</h3>
+          <p class="skill-desc">Learn bookkeeping, financial statements, budgeting, costing, and advanced accounting
+            software.</p>
+          <div class="skill-tags"><span class="stag">Bookkeeping</span><span class="stag">Budgeting</span><span
+              class="stag">Costing</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Accounting & Financial Management')">Enroll
+            →</button>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">💻</div>
+          <h3 class="skill-name">Computer & Business Software</h3>
+          <p class="skill-desc">MS Office, Excel Advanced, Tally, QuickBooks, and essential business productivity tools.
+          </p>
+          <div class="skill-tags"><span class="stag">MS Excel</span><span class="stag">Tally</span><span
+              class="stag">QuickBooks</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Computer & Business Software')">Enroll
+            →</button>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🚀</div>
+          <h3 class="skill-name">Career Development Workshops</h3>
+          <p class="skill-desc">Resume building, interview prep, communication skills, and professional networking.</p>
+          <div class="skill-tags"><span class="stag">Resume</span><span class="stag">Interview Prep</span><span
+              class="stag">Soft Skills</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Career Development Workshop')">Enroll
+            →</button>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🏗️</div>
+          <h3 class="skill-name">Internship & Project-Based Learning</h3>
+          <p class="skill-desc">Real-world projects with partner businesses, internship placements, and industry
+            exposure.</p>
+          <div class="skill-tags"><span class="stag">Real Projects</span><span class="stag">Internship</span><span
+              class="stag">Industry</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Internship & Project-Based Learning')">Enroll
+            →</button>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">📱</div>
+          <h3 class="skill-name">Digital Marketing</h3>
+          <p class="skill-desc">SEO, Social Media Marketing, Google Ads, Content Marketing, and Analytics for modern
+            businesses.</p>
+          <div class="skill-tags"><span class="stag">SEO</span><span class="stag">Social Media</span><span
+              class="stag">Analytics</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Digital Marketing')">Enroll →</button>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">💡</div>
+          <h3 class="skill-name">Entrepreneurship & Startup</h3>
+          <p class="skill-desc">Business plan writing, startup funding, GST registration, and building your own
+            enterprise.</p>
+          <div class="skill-tags"><span class="stag">Business Plan</span><span class="stag">Funding</span><span
+              class="stag">GST Setup</span></div>
+          <button class="btn-gradient btn-enroll-sm" onclick="openEnroll('Entrepreneurship & Startup')">Enroll
+            →</button>
+        </div>
+      </div>
+
+      <!-- Flexible Learning Modes -->
+      <div class="learning-modes">
+        <h3 class="lm-title">Flexible <span class="accent-red">Learning Modes</span></h3>
+        <p class="lm-sub">Choose the format that fits your lifestyle and learning goals</p>
+        <div class="lm-grid">
+          <div class="lm-card lm-online">
+            <div class="lm-icon">🌐</div>
+            <h4 class="lm-name">Online Learning</h4>
+            <p class="lm-desc">Live virtual classes + recorded lessons accessible anytime from anywhere. Perfect for
+              working professionals and remote learners.</p>
+            <ul class="lm-list">
+              <li>✓ HD live sessions via Zoom/Meet</li>
+              <li>✓ Recorded sessions — rewatch anytime</li>
+              <li>✓ Digital study materials & PDFs</li>
+              <li>✓ Online doubt-clearing via WhatsApp</li>
+              <li>✓ e-Certificate on completion</li>
+            </ul>
+          </div>
+          <div class="lm-card lm-offline">
+            <div class="lm-icon">🏫</div>
+            <h4 class="lm-name">Offline Learning</h4>
+            <p class="lm-desc">Classroom coaching with practical workshops, labs, and face-to-face mentoring at our
+              Erode center.</p>
+            <ul class="lm-list">
+              <li>✓ Small batch classroom sessions</li>
+              <li>✓ Hands-on workshops & labs</li>
+              <li>✓ Printed study materials</li>
+              <li>✓ Direct faculty access</li>
+              <li>✓ Physical certificate & ID card</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo-wrap">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--footer" />
+            <div><span class="footer-logo-main">Global India Digital</span><span class="footer-logo-sub">Solution</span>
+            </div>
+          </div>
+          <p class="footer-tagline">Your trusted platform for commerce education, professional training, and financial
+            services.</p>
+          <div class="footer-socials">
+            <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            </a>
+            <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512">
+                <defs>
+                  <linearGradient id="igGradientTrain" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#feda75"/>
+                    <stop offset="25%" stop-color="#fa7e1e"/>
+                    <stop offset="50%" stop-color="#d62976"/>
+                    <stop offset="75%" stop-color="#962fbf"/>
+                    <stop offset="100%" stop-color="#4f5bd5"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#igGradientTrain)"
+                  d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-dashboard');return false;">Home</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Services</a></li>
+            <li><a href="#" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Our Services</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-training');return false;">Exam Coaching</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Skill Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Audit and Taxation Services</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Tally Prime</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact Info</div>
+          <ul class="footer-links footer-contact-links">
+            <li>📍 169/117B, Bhavani Main Road, Thalavaipettai, Erode-638 312</li>
+            <li>📞 +91 63 74 66 94 86</li>
+            <li>✉️ gids.yuva@gmail.com</li>
+          </ul>
+        </div>
+        <div id="footer-socials-mobile">
+          <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </a>
+          <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 448 512">
+              <defs>
+                <linearGradient id="instagramGradient2" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#feda75"/>
+                  <stop offset="25%" stop-color="#fa7e1e"/>
+                  <stop offset="50%" stop-color="#d62976"/>
+                  <stop offset="75%" stop-color="#962fbf"/>
+                  <stop offset="100%" stop-color="#4f5bd5"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#instagramGradient2)"
+                d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Global India Digital Solution. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+     PAGE 6 — SERVICES PAGE
+     ============================================================ -->
+  <div id="page-services" class="page">
+
+    <div class="ad-banner">
+      <div class="ad-track">
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 GST Registration · Income Tax Filing · Business Financial Audit &nbsp;|&nbsp; 🧮 Tally Prime —
+          Authorized Dealer &nbsp;&nbsp;&nbsp;</span>
+        <span>💼 Compliance & Advisory · Payroll Management · ROC Filing &nbsp;|&nbsp; ✅ 500+ Tax Returns Filed
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 100+ Businesses Served · 98% Client Satisfaction · 10+ Years &nbsp;&nbsp;&nbsp;</span>
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>📊 GST Registration · Income Tax Filing · Business Financial Audit &nbsp;|&nbsp; 🧮 Tally Prime —
+          Authorized Dealer &nbsp;&nbsp;&nbsp;</span>
+        <span>💼 Compliance & Advisory · Payroll Management · ROC Filing &nbsp;|&nbsp; ✅ 500+ Tax Returns Filed
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 100+ Businesses Served · 98% Client Satisfaction · 10+ Years &nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+    <nav class="main-nav" id="srv-nav">
+      <div class="nav-logo" onclick="showPage('page-dashboard')">
+        <div class="nav-logo-icon">
+          <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--nav" />
+        </div>
+        <div class="nav-logo-text">
+          <span class="nlm">Global India Digital Solution</span>
+          <span class="nls">Education · Training · Business</span>
+        </div>
+      </div>
+      <ul class="nav-links" id="srv-nav-links">
+        <li><a href="#" class="nav-link" onclick="showPage('page-dashboard');return false;">Home</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-training');return false;">Training</a></li>
+        <li><a href="#" class="nav-link active">Services</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+        <li><a href="#" class="nav-link logout-link" onclick="handleLogout();return false;">Logout</a></li>
+      </ul>
+      <button class="hamburger" onclick="toggleNav('srv-nav-links')">☰</button>
+    </nav>
+
+    <section class="inner-hero services-hero">
+      <div class="inner-hero-content">
+        <div class="inner-hero-tag">Professional Business Solutions</div>
+        <h1 class="inner-hero-title">Our <span class="hero-accent">Services</span></h1>
+        <p class="inner-hero-desc">Expert financial, tax, and software services for individuals, businesses, and
+          enterprises</p>
+      </div>
+    </section>
+
+    <!-- Section A: Audit & Tax -->
+    <section class="services-section">
+      <h2 class="section-title">Audit and <span class="accent-red">Taxation Services</span></h2>
+      <p class="section-sub">Professional financial services for individuals and businesses to ensure compliance and
+        growth</p>
+      <div class="services-grid">
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">📄</span></div>
+          <h3 class="srv-name">Income Tax Filing & Consultation</h3>
+          <p class="srv-desc">Expert assistance with personal and business income tax returns with maximum deductions.
+          </p>
+          <ul class="srv-list">
+            <li>Individual & corporate tax returns</li>
+            <li>Tax planning & optimization</li>
+            <li>TDS filing & reconciliation</li>
+            <li>Notice & scrutiny handling</li>
+          </ul>
+        </div>
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">💵</span></div>
+          <h3 class="srv-name">GST Registration</h3>
+          <p class="srv-desc">Quick and hassle-free GST registration for your business from new registrations to
+            amendments.</p>
+          <ul class="srv-list">
+            <li>New GST registration</li>
+            <li>Amendment & cancellation</li>
+            <li>Letter of Undertaking (LUT)</li>
+            <li>GSTIN verification & guidance</li>
+          </ul>
+        </div>
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">🛡</span></div>
+          <h3 class="srv-name">GST Return Filing</h3>
+          <p class="srv-desc">Accurate and timely GST return filing — GSTR-1, GSTR-3B, GSTR-9, and more.</p>
+          <ul class="srv-list">
+            <li>Monthly & quarterly GSTR filing</li>
+            <li>Annual return GSTR-9</li>
+            <li>Reconciliation & correction</li>
+            <li>ITC claim management</li>
+          </ul>
+        </div>
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">📊</span></div>
+          <h3 class="srv-name">Business Financial Audit</h3>
+          <p class="srv-desc">Comprehensive audit services for compliance, transparency, and stakeholder trust.</p>
+          <ul class="srv-list">
+            <li>Statutory & internal audits</li>
+            <li>Bank & stock audits</li>
+            <li>Fraud investigation</li>
+            <li>Audit reports & certifications</li>
+          </ul>
+        </div>
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">🧮</span></div>
+          <h3 class="srv-name">Accounting & Bookkeeping</h3>
+          <p class="srv-desc">Professional bookkeeping and account management services to keep your finances organized.
+          </p>
+          <ul class="srv-list">
+            <li>Daily bookkeeping & ledger</li>
+            <li>P&L and balance sheet prep</li>
+            <li>Payroll management</li>
+            <li>MIS reports & dashboards</li>
+          </ul>
+        </div>
+        <div class="srv-card">
+          <div class="srv-icon-wrap"><span class="srv-icon">📋</span></div>
+          <h3 class="srv-name">Compliance & Financial Advisory</h3>
+          <p class="srv-desc">Strategic financial planning and regulatory compliance support for businesses.</p>
+          <ul class="srv-list">
+            <li>ROC filing & compliance</li>
+            <li>MSME registration</li>
+            <li>Financial planning & forecasting</li>
+            <li>Business startup advisory</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-num">100+</div>
+          <div class="stat-label">Businesses Served</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Tax Returns Filed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">Client Satisfaction</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">10+</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px">
+        <button class="btn-gradient"
+          onclick="showPage('page-dashboard');setTimeout(()=>document.getElementById('contact-section').scrollIntoView({behavior:'smooth'}),400)">Book
+          a Consultation →</button>
+      </div>
+    </section>
+
+    <!-- Section B: Tally Prime -->
+    <section class="services-section tally-section">
+      <h2 class="section-title">Tally Prime <span class="accent-red">Solutions</span></h2>
+      <p class="section-sub">Complete Tally Prime software services with sales, support, and training for your business
+        success</p>
+      <div class="tally-layout">
+        <div class="tally-why">
+          <h3 class="tally-why-title">Why Tally Prime?</h3>
+          <p class="tally-why-desc">India's most trusted business management software for accounting, inventory, and
+            compliance</p>
+          <ul class="tally-features">
+            <li><span class="tf-icon">✓</span> Inventory Management</li>
+            <li><span class="tf-icon">✓</span> GST Compliance</li>
+            <li><span class="tf-icon">✓</span> Financial Reporting</li>
+            <li><span class="tf-icon">✓</span> Payroll Processing</li>
+            <li><span class="tf-icon">✓</span> Multi-location Support</li>
+            <li><span class="tf-icon">✓</span> Data Security</li>
+            <li><span class="tf-icon">✓</span> AI-powered Insights</li>
+            <li><span class="tf-icon">✓</span> Cloud Access</li>
+          </ul>
+        </div>
+        <div class="tally-services">
+          <div class="tsrv-card">
+            <div class="tsrv-icon">🏷️</div>
+            <div>
+              <div class="tsrv-name">Tally Prime Sales & Licensing</div>
+              <div class="tsrv-desc">Get genuine Tally Prime software with official licensing from authorized dealer.
+              </div>
+            </div>
+          </div>
+          <div class="tsrv-card">
+            <div class="tsrv-icon">⚙️</div>
+            <div>
+              <div class="tsrv-name">Installation & Configuration</div>
+              <div class="tsrv-desc">Professional setup and configuration for single user or multi-user network.</div>
+            </div>
+          </div>
+          <div class="tsrv-card">
+            <div class="tsrv-icon">🔧</div>
+            <div>
+              <div class="tsrv-name">Business Customization</div>
+              <div class="tsrv-desc">Tailored solutions to match your specific business requirements and workflows.
+              </div>
+            </div>
+          </div>
+          <div class="tsrv-card">
+            <div class="tsrv-icon">🎓</div>
+            <div>
+              <div class="tsrv-name">User Training</div>
+              <div class="tsrv-desc">Comprehensive training for accountants and staff — beginner to advanced levels.
+              </div>
+            </div>
+          </div>
+          <div class="tsrv-card">
+            <div class="tsrv-icon">🛠️</div>
+            <div>
+              <div class="tsrv-name">Technical Support & Maintenance</div>
+              <div class="tsrv-desc">Ongoing support to keep your system running — remote and on-site assistance.</div>
+            </div>
+          </div>
+          <div class="tsrv-card">
+            <div class="tsrv-icon">🔄</div>
+            <div>
+              <div class="tsrv-name">Data Migration & Upgrade</div>
+              <div class="tsrv-desc">Seamless migration from older Tally versions with zero data loss guarantee.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tally-cta">
+        <div class="tally-cta-inner">
+          <h3>Ready to Transform Your Business Accounting?</h3>
+          <p>Get started with Tally Prime today and streamline your accounting, inventory, and compliance process.</p>
+          <button class="btn-gradient"
+            onclick="showPage('page-dashboard');setTimeout(()=>document.getElementById('contact-section').scrollIntoView({behavior:'smooth'}),400)">Get
+            Tally Prime Now →</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo-wrap">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--footer" />
+            <div><span class="footer-logo-main">Global India Digital</span><span class="footer-logo-sub">Solution</span>
+            </div>
+          </div>
+          <p class="footer-tagline">Your trusted platform for commerce education, professional training, and financial
+            services.</p>
+          <div class="footer-socials">
+            <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            </a>
+            <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512">
+                <defs>
+                  <linearGradient id="igGradientSrv" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#feda75"/>
+                    <stop offset="25%" stop-color="#fa7e1e"/>
+                    <stop offset="50%" stop-color="#d62976"/>
+                    <stop offset="75%" stop-color="#962fbf"/>
+                    <stop offset="100%" stop-color="#4f5bd5"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#igGradientSrv)"
+                  d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-dashboard');return false;">Home</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Services</a></li>
+            <li><a href="#" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Our Services</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-training');return false;">Exam Coaching</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Skill Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Audit and Taxation Services</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Tally Prime</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact Info</div>
+          <ul class="footer-links footer-contact-links">
+            <li>📍 169/117B, Bhavani Main Road, Thalavaipettai, Erode-638 312</li>
+            <li>📞 +91 63 74 66 94 86</li>
+            <li>✉️ gids.yuva@gmail.com</li>
+          </ul>
+        </div>
+        <div id="footer-socials-mobile">
+          <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </a>
+          <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 448 512">
+              <defs>
+                <linearGradient id="instagramGradient3" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#feda75"/>
+                  <stop offset="25%" stop-color="#fa7e1e"/>
+                  <stop offset="50%" stop-color="#d62976"/>
+                  <stop offset="75%" stop-color="#962fbf"/>
+                  <stop offset="100%" stop-color="#4f5bd5"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#instagramGradient3)"
+                d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Global India Digital Solution. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+     PAGE 7 — WHO WE ARE
+     ============================================================ -->
+  <div id="page-whoweare" class="page">
+
+    <div class="ad-banner">
+      <div class="ad-track">
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🌏 Empowering Students · Professionals · Businesses since 2015 &nbsp;|&nbsp; 🏆 Trusted by 1200+ Learners
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 Commerce Education · Professional Training · Audit Services · Tally Prime &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 10+ Years of Excellence · Based in Erode, Tamil Nadu &nbsp;&nbsp;&nbsp;</span>
+        <span>📞 +91 63 74 66 94 86 &nbsp;|&nbsp; 📅 Book Consultation: http://localhost:5173/#contact
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🌏 Empowering Students · Professionals · Businesses since 2015 &nbsp;|&nbsp; 🏆 Trusted by 1200+ Learners
+          &nbsp;&nbsp;&nbsp;</span>
+        <span>🎓 Commerce Education · Professional Training · Audit Services · Tally Prime &nbsp;&nbsp;&nbsp;</span>
+        <span>⭐ 10+ Years of Excellence · Based in Erode, Tamil Nadu &nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+    <nav class="main-nav" id="who-nav">
+      <div class="nav-logo" onclick="showPage('page-dashboard')">
+        <div class="nav-logo-icon">
+          <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--nav" />
+        </div>
+        <div class="nav-logo-text">
+          <span class="nlm">Global India Digital Solution</span>
+          <span class="nls">Education · Training · Business</span>
+        </div>
+      </div>
+      <ul class="nav-links" id="who-nav-links">
+        <li><a href="#" class="nav-link" onclick="showPage('page-dashboard');return false;">Home</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-training');return false;">Training</a></li>
+        <li><a href="#" class="nav-link" onclick="showPage('page-services');return false;">Services</a></li>
+        <li><a href="#" class="nav-link active">Who We Are?</a></li>
+        <li><a href="#" class="nav-link logout-link" onclick="handleLogout();return false;">Logout</a></li>
+      </ul>
+      <button class="hamburger" onclick="toggleNav('who-nav-links')">☰</button>
+    </nav>
+
+    <!-- About Hero -->
+    <section class="about-hero">
+      <div class="about-hero-content">
+        <div class="about-tag">Est. 2015 · Erode, Tamil Nadu</div>
+        <h1 class="about-title">We Are <span class="accent-red">Global India</span><br /><span
+            class="accent-red">Digital Solution</span></h1>
+        <p class="about-subtitle">Bridging the gap between education and professional excellence — all under one roof
+        </p>
+        <div class="about-hero-btns">
+          <button class="btn-gradient" onclick="showPage('page-training')">Explore Courses →</button>
+          <button class="btn-outline-white" onclick="showPage('page-services')">Our Services →</button>
+        </div>
+      </div>
+      <div class="about-hero-visual">
+        <div class="about-shape-ring"></div>
+        <div class="about-center-icon">🌏</div>
+        <div class="about-stat-badge ab1"><span class="ab-num">1200+</span><span class="ab-lbl">Students</span></div>
+        <div class="about-stat-badge ab2"><span class="ab-num">10+</span><span class="ab-lbl">Years</span></div>
+        <div class="about-stat-badge ab3"><span class="ab-num">98%</span><span class="ab-lbl">Satisfaction</span></div>
+      </div>
+    </section>
+
+    <!-- Mission Vision Values -->
+    <section class="mv-section">
+      <h2 class="section-title">Our <span class="accent-red">Foundation</span></h2>
+      <p class="section-sub">The principles that guide everything we do at Global India Digital Solution</p>
+      <div class="mv-grid">
+        <div class="mv-card mv-mission">
+          <div class="mv-icon-wrap"><span class="mv-icon">🎯</span></div>
+          <h3 class="mv-title">Our Mission</h3>
+          <p class="mv-text">To deliver high-quality, affordable education and professional services that empower every
+            student, professional, and business in India to achieve their true potential.</p>
+        </div>
+        <div class="mv-card mv-vision">
+          <div class="mv-icon-wrap"><span class="mv-icon">🔭</span></div>
+          <h3 class="mv-title">Our Vision</h3>
+          <p class="mv-text">To become India's most trusted one-stop platform for commerce education, professional
+            certifications, tax compliance, and business software — making excellence accessible nationwide.</p>
+        </div>
+        <div class="mv-card mv-values">
+          <div class="mv-icon-wrap"><span class="mv-icon">💎</span></div>
+          <h3 class="mv-title">Our Values</h3>
+          <p class="mv-text">Integrity, personalized attention, practical learning, and genuine care for every learner
+            and client. We maintain small batches because every individual deserves focused guidance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What We Offer -->
+    <section class="offer-section">
+      <h2 class="section-title">What We <span class="accent-red">Offer</span></h2>
+      <p class="section-sub">A complete ecosystem of education, training, and professional services</p>
+      <div class="offer-grid">
+        <div class="offer-item">
+          <div class="offer-icon">🏫</div>
+          <div class="offer-num">01</div>
+          <div class="offer-content">
+            <h3 class="offer-title">Competitive Exam Coaching</h3>
+            <p class="offer-desc">NEET, JEE, CA, and CMA preparation with expert faculty, small batches, live &
+              recorded classes, and comprehensive study materials.</p>
+            <button class="btn-gradient-sm" onclick="showPage('page-training')">Learn More →</button>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="offer-icon">💼</div>
+          <div class="offer-num">02</div>
+          <div class="offer-content">
+            <h3 class="offer-title">Professional Skill Development</h3>
+            <p class="offer-desc">Accounting, computer software, digital marketing, career workshops, and internship
+              programs that make you job-ready and industry-relevant.</p>
+            <button class="btn-gradient-sm" onclick="showPage('page-training')">Learn More →</button>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="offer-icon">📊</div>
+          <div class="offer-num">03</div>
+          <div class="offer-content">
+            <h3 class="offer-title">Audit and Taxation Services</h3>
+            <p class="offer-desc">Income tax filing, GST registration & returns, business audits, bookkeeping, and
+              compliance advisory for individuals and businesses.</p>
+            <button class="btn-gradient-sm" onclick="showPage('page-services')">Learn More →</button>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="offer-icon">🖥️</div>
+          <div class="offer-num">04</div>
+          <div class="offer-content">
+            <h3 class="offer-title">Tally Prime Solutions</h3>
+            <p class="offer-desc">Authorized Tally Prime sales, installation, customization, user training, and
+              technical support to transform your business accounting experience.</p>
+            <button class="btn-gradient-sm" onclick="showPage('page-services')">Learn More →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Numbers -->
+    <section class="numbers-section">
+      <h2 class="section-title" style="color:white;">Our <span class="accent-red">Impact</span> in Numbers</h2>
+      <div class="numbers-grid">
+        <div class="number-item">
+          <div class="big-num">1200+</div>
+          <div class="num-label">Students Trained</div>
+        </div>
+        <div class="number-item">
+          <div class="big-num">100+</div>
+          <div class="num-label">Businesses Served</div>
+        </div>
+        <div class="number-item">
+          <div class="big-num">500+</div>
+          <div class="num-label">Tax Returns Filed</div>
+        </div>
+        <div class="number-item">
+          <div class="big-num">50+</div>
+          <div class="num-label">Courses Available</div>
+        </div>
+        <div class="number-item">
+          <div class="big-num">98%</div>
+          <div class="num-label">Client Satisfaction</div>
+        </div>
+        <div class="number-item">
+          <div class="big-num">10+</div>
+          <div class="num-label">Years of Excellence</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Cards -->
+    <section class="team-section">
+      <h2 class="section-title">Meet Our <span class="accent-red">Expert Team</span></h2>
+      <p class="section-sub">Experienced professionals dedicated to your success</p>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">CA</div>
+          <div class="team-name">CA Gobi</div>
+          <div class="team-role">Founder & Lead Trainer</div>
+          <div class="team-desc">Chartered Accountant with 10+ years of experience in education, audit, and business
+            advisory.</div>
+          <div class="team-tags"><span class="stag">CA</span><span class="stag">Audit</span><span
+              class="stag">Tax</span></div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">MT</div>
+          <div class="team-name">Maths Team</div>
+          <div class="team-role">JEE & NEET Faculty</div>
+          <div class="team-desc">Expert faculty for competitive exam coaching with proven track records of student
+            success.</div>
+          <div class="team-tags"><span class="stag">JEE</span><span class="stag">NEET</span><span
+              class="stag">Maths</span></div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">TS</div>
+          <div class="team-name">Tally Specialists</div>
+          <div class="team-role">Software & Training Team</div>
+          <div class="team-desc">Certified Tally professionals providing sales, support, training, and customization
+            services.</div>
+          <div class="team-tags"><span class="stag">Tally</span><span class="stag">GST</span><span
+              class="stag">ERP</span></div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">SK</div>
+          <div class="team-name">Skill Development Team</div>
+          <div class="team-role">Career & Skills Faculty</div>
+          <div class="team-desc">Industry professionals who bring real-world experience to career development and skill
+            training programs.</div>
+          <div class="team-tags"><span class="stag">Career</span><span class="stag">Digital</span><span
+              class="stag">Skills</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Location -->
+    <section class="location-section">
+      <h2 class="section-title">Find <span class="accent-red">Us</span></h2>
+      <div class="location-card">
+        <div class="location-info">
+          <div class="loc-item"><span class="loc-icon">📍</span>
+            <div>
+              <div class="loc-label">Our Office</div>
+              <div class="loc-val">169/117B, Bhavani Main Road, Thalavaipettai, Erode – 638 312, Tamil Nadu, India</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">📞</span>
+            <div>
+              <div class="loc-label">Phone</div>
+              <div class="loc-val">+91 63 74 66 94 86</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">✉️</span>
+            <div>
+              <div class="loc-label">Email</div>
+              <div class="loc-val">gids.yuva@gmail.com</div>
+            </div>
+          </div>
+          <div class="loc-item"><span class="loc-icon">🕐</span>
+            <div>
+              <div class="loc-label">Office Hours</div>
+              <div class="loc-val">Mon – Sat: 9:00 AM – 6:00 PM</div>
+              <div class="loc-val">Sunday: Closed</div>
+            </div>
+          </div>
+        </div>
+        <div class="location-cta">
+          <h3>Ready to Join Us?</h3>
+          <p>Whether you're a student, professional, or business owner — we're here to help you succeed.</p>
+          <button class="btn-gradient" onclick="showPage('page-training')">Explore Courses →</button>
+          <button class="btn-outline" onclick="showPage('page-services')">View Services →</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo-wrap">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--footer" />
+            <div><span class="footer-logo-main">Global India Digital</span><span class="footer-logo-sub">Solution</span>
+            </div>
+          </div>
+          <p class="footer-tagline">Your trusted platform for commerce education, professional training, and financial
+            services.</p>
+          <div class="footer-socials">
+            <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            </a>
+            <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+              </svg>
+            </a>
+            <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 448 512">
+                <defs>
+                  <linearGradient id="igGradientWho" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#feda75"/>
+                    <stop offset="25%" stop-color="#fa7e1e"/>
+                    <stop offset="50%" stop-color="#d62976"/>
+                    <stop offset="75%" stop-color="#962fbf"/>
+                    <stop offset="100%" stop-color="#4f5bd5"/>
+                  </linearGradient>
+                </defs>
+                <path fill="url(#igGradientWho)"
+                  d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-dashboard');return false;">Home</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Services</a></li>
+            <li><a href="#" onclick="showPage('page-whoweare');return false;">Who We Are?</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Our Services</div>
+          <ul class="footer-links">
+            <li><a href="#" onclick="showPage('page-training');return false;">Exam Coaching</a></li>
+            <li><a href="#" onclick="showPage('page-training');return false;">Skill Training</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Audit and Taxation Services</a></li>
+            <li><a href="#" onclick="showPage('page-services');return false;">Tally Prime</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact Info</div>
+          <ul class="footer-links footer-contact-links">
+            <li>📍 169/117B, Bhavani Main Road, Thalavaipettai, Erode-638 312</li>
+            <li>📞 +91 63 74 66 94 86</li>
+            <li>✉️ gids.yuva@gmail.com</li>
+          </ul>
+        </div>
+        <div id="footer-socials-mobile">
+          <a href="https://www.facebook.com/share/p/194zEJWLZV/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="mailto:gids.yuva@gmail.com" class="social-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#EA4335"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 010 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </a>
+          <a href="https://chat.whatsapp.com/CvZbixHi0JF7oVgnwVu27d?s=sw&p=i&mlu=0&ilr=1" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.768.966-.94 1.164-.173.198-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479s1.065 2.875 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12.04 2C6.51 2 2 6.486 2 12c0 1.94.55 3.83 1.6 5.47L2 22l4.67-1.54A9.95 9.95 0 0 0 12.04 22C17.57 22 22 17.514 22 12S17.57 2 12.04 2zm0 18.18c-1.67 0-3.3-.45-4.72-1.3l-.34-.2-2.77.91.9-2.7-.22-.35A8.15 8.15 0 0 1 3.86 12c0-4.5 3.67-8.17 8.18-8.17 4.5 0 8.16 3.66 8.16 8.17 0 4.5-3.66 8.18-8.16 8.18z"/>
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/gids.yuva/" class="social-btn" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 448 512">
+              <defs>
+                <linearGradient id="instagramGradient4" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#feda75"/>
+                  <stop offset="25%" stop-color="#fa7e1e"/>
+                  <stop offset="50%" stop-color="#d62976"/>
+                  <stop offset="75%" stop-color="#962fbf"/>
+                  <stop offset="100%" stop-color="#4f5bd5"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#instagramGradient4)"
+                d="M224.1 141c-63.6 0-115.1 51.5-115.1 115.1S160.5 371.2 224.1 371.2 339.2 319.7 339.2 256.1 287.7 141 224.1 141zm0 189.6c-41.1 0-74.5-33.4-74.5-74.5s33.4-74.5 74.5-74.5 74.5 33.4 74.5 74.5-33.4 74.5-74.5 74.5zm146.4-194.3c0 14.9-12.1 27-27 27s-27-12.1-27-27 12.1-27 27-27 27 12.1 27 27zM398.8 80c-14.7-14.7-34.3-22.8-55.1-22.8H104.3C61.2 57.2 26 92.4 26 135.5v240.9c0 43.1 35.2 78.3 78.3 78.3h239.4c20.8 0 40.4-8.1 55.1-22.8 14.7-14.7 22.8-34.3 22.8-55.1V135.5c0-20.8-8.1-40.4-22.8-55.5zM377.6 376.4c0 18.7-15.2 33.9-33.9 33.9H104.3c-18.7 0-33.9-15.2-33.9-33.9V135.5c0-18.7 15.2-33.9 33.9-33.9h239.4c18.7 0 33.9 15.2 33.9 33.9v240.9z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Global India Digital Solution. All rights reserved.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+     ENROLL MODAL
+     ============================================================ -->
+  <div id="enroll-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeEnroll()">✕</button>
+      <div class="modal-logo">🎓</div>
+      <h2 class="modal-title">Enroll in <span id="enroll-course-name" class="accent-red"></span></h2>
+      <p class="modal-sub">Fill in your details and we'll get in touch within 24 hours</p>
+      <div class="modal-form">
+        <div class="field-group"><label class="field-label">Full Name</label><input type="text" id="enroll-name"
+            class="field-input" placeholder="Your full name" /></div>
+        <div class="field-group"><label class="field-label">Phone Number</label><input type="tel" id="enroll-phone"
+            class="field-input" placeholder="+91 00000 00000" /></div>
+        <div class="field-group"><label class="field-label">Email Address</label><input type="email" id="enroll-email"
+            class="field-input" placeholder="your@email.com" /></div>
+        <div class="field-group"><label class="field-label">Learning Mode</label><select id="enroll-mode"
+            class="field-input">
+            <option>Online</option>
+            <option>Offline</option>
+            <option>Both</option>
+          </select></div>
+        <button class="btn-gradient auth-btn" onclick="submitEnroll()">Submit Enrollment →</button>
+      </div>
+      <div id="enroll-success" class="auth-success hidden" style="margin-top:16px">✅ Enrollment submitted! We'll contact
+        you soon.</div>
+    </div>
+  </div>
+
+  <div id="nav-overlay" class="nav-mobile-overlay hidden" onclick="closeAllNavs()"></div>
+
+  <!-- Success Toast (top popup) -->
+  <div id="toast-container" class="toast-container hidden" aria-live="polite">
+    <div class="toast-popup">
+      <button class="toast-close" onclick="hideToast()" aria-label="Close">✕</button>
+      <div id="toast-title" class="toast-title"></div>
+      <div id="toast-message" class="toast-message"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
