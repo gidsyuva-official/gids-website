@@ -107,7 +107,7 @@ async function initDatabase() {
       )
     `);
 
-    console.log('✅ PostgreSQL connected and tables initialized');
+    console.log('✅ PostgreSQL connected and tables initialized (v2)');
   } catch (err) {
     console.error('❌ Database initialization failed:', err.message);
   }
