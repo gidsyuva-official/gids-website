@@ -1,69 +1,72 @@
 -- ============================================================
--- Global India Digital Solution — MySQL Database Setup
+-- Global India Digital Solution — PostgreSQL Database Setup
 -- Database name: gids_database
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS gids_database
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE gids_database;
+-- Note: The server automatically creates these tables on startup
+-- This file is provided for reference purposes only
 
 -- Book a Consultation (Send Us a Message form)
 CREATE TABLE IF NOT EXISTS consultations (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   email VARCHAR(200) NOT NULL,
   phone VARCHAR(30) NOT NULL,
   service_interest VARCHAR(100) NOT NULL,
   message TEXT NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Enroll Now / Enroll (Exam Coaching + Skill Development cards)
 CREATE TABLE IF NOT EXISTS enroll (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   full_name VARCHAR(150) NOT NULL,
   phone_number VARCHAR(30) NOT NULL,
   email_address VARCHAR(200) NOT NULL,
   learning_mode VARCHAR(50) NOT NULL,
   course_name VARCHAR(200) NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Reviews / Testimonials
 CREATE TABLE IF NOT EXISTS reviews_table (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   email VARCHAR(255) NOT NULL,
   role VARCHAR(100) DEFAULT 'Learner',
-  rating TINYINT NOT NULL,
+  rating SMALLINT NOT NULL,
   comment TEXT NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Users (verified accounts only)
 CREATE TABLE IF NOT EXISTS users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  full_name VARCHAR(100) NOT NULL,
-  username VARCHAR(50) NOT NULL UNIQUE,
+  id SERIAL PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
+  login_name VARCHAR(120) NOT NULL,
+  full_name VARCHAR(100),
+  username VARCHAR(50),
   email VARCHAR(255) NOT NULL UNIQUE,
   phone VARCHAR(20) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Pending Users (waiting for email verification)
 CREATE TABLE IF NOT EXISTS pending_users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  full_name VARCHAR(100) NOT NULL,
-  username VARCHAR(50) NOT NULL,
+  id SERIAL PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(20) NOT NULL,
+  login_name VARCHAR(120) NOT NULL,
+  full_name VARCHAR(100),
+  username VARCHAR(50),
   email VARCHAR(255) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   password VARCHAR(255) NOT NULL,
   role VARCHAR(50) NOT NULL,
   verification_token TEXT NOT NULL,
-  expires_at DATETIME NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
