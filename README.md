@@ -53,7 +53,6 @@ DB_NAME=gids_database
 PORT=3000
 EMAIL_USER=yourgmail@gmail.com
 EMAIL_PASS=your_gmail_app_password
-BASE_URL=https://your-render-service.onrender.com
 JWT_SECRET=some_secret_value
 VERIFY_LINK_EXPIRES_MINUTES=15
 ```
@@ -65,12 +64,9 @@ npm install
 npm start
 ```
 
-Open in browser: **http://localhost:3000** (local)
+Open in browser: **http://localhost:3000**
 
-For Render deployment:
-
-- Set `BASE_URL` to your Render service URL (e.g. `https://my-app.onrender.com`).
-- Render often blocks SMTP port 587; use Gmail SSL on port `465` and set `EMAIL_USER` and `EMAIL_PASS` (app password) in Render environment variables.
+> Important: Use `http://localhost:3000`. Do NOT open `index.html` directly.
 
 ---
 

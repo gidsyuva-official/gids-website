@@ -645,5 +645,4 @@ initDatabase()
     console.error('❌ Database connection failed:', err.message);
     console.error('   Check MySQL is running and .env settings are correct.');
     process.exit(1);
-    
   });

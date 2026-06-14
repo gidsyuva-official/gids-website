@@ -11,12 +11,13 @@ async function main() {
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
     auth: {
-      user: (process.env.EMAIL_USER || '').trim(),
-      pass: (process.env.EMAIL_PASS || '').trim()
-    }
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    },
+    tls: { rejectUnauthorized: false }
   });
 
   try {
@@ -27,8 +28,7 @@ async function main() {
   }
 
   const token = crypto.randomBytes(16).toString('hex');
-  const baseUrl = (process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`).trim();
-  const magicLink = `${baseUrl.replace(/\/$/, '')}/verify/${token}`;
+  const magicLink = `http://localhost:${process.env.PORT || 3000}/verify/${token}`;
 
   const mailOptions = {
     from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
