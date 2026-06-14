@@ -162,8 +162,8 @@ try {
 
   transporter.verify((verifyErr, success) => {
     if (verifyErr) {
-      console.warn('⚠️ Nodemailer verification failed:', verifyErr);
-      console.warn('   Check EMAIL_USER and EMAIL_PASS in Render environment settings and use a valid Gmail app password.');
+      console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
+      console.warn('   Check EMAIL_USER and EMAIL_PASS in .env and use a valid Gmail app password.');
       emailConfigured = false;
     } else {
       console.log('✅ Nodemailer configured and ready to send email');
@@ -172,7 +172,7 @@ try {
   });
 } catch (err) {
   console.warn('⚠️ Nodemailer not configured - verification emails will not work');
-  console.warn(err);
+  console.warn(err.message);
   emailConfigured = false;
 }
 
@@ -413,9 +413,9 @@ app.post('/api/signup', async (req, res) => {
     const expiresMinutes = Number(process.env.VERIFY_LINK_EXPIRES_MINUTES) || 15;
     const expiresAt = new Date(Date.now() + expiresMinutes * 60 * 1000);
 
-    // Generate magic link using deployed base URL if provided
-    const baseUrl = (process.env.BASE_URL || `${req.protocol}://${req.get('host')}`).trim();
-    const magicLink = `${baseUrl.replace(/\/$/, '')}/verify/${verificationToken}`;
+    // Generate magic link (works for both local and deployed)
+    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const magicLink = `${baseUrl}/verify/${verificationToken}`;
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !transporter) {
       return res.status(500).json({
@@ -457,7 +457,7 @@ app.post('/api/signup', async (req, res) => {
       console.log(`📧 Verification email sent to ${email}`);
       console.log('Mail send info:', sendInfo && typeof sendInfo === 'object' ? JSON.stringify(sendInfo) : sendInfo);
     } catch (mailErr) {
-      console.error('Verification email send failed:', mailErr.message);
+      console.error('Verification email send failed:', mailErr);
       return res.status(500).json({
         success: false,
         message: 'Verification email could not be sent. Please check email configuration and try again.'
@@ -645,4 +645,5 @@ initDatabase()
     console.error('❌ Database connection failed:', err.message);
     console.error('   Check MySQL is running and .env settings are correct.');
     process.exit(1);
+    
   });
