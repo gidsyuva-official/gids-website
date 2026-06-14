@@ -1,29 +1,27 @@
-# Deploying GIDS to Render (with a free cloud MySQL)
+## Deploying GIDS to Render (PostgreSQL)
 
-This document describes the recommended steps to deploy the `GIDS` app to Render and connect it to a free cloud MySQL provider (PlanetScale recommended).
+This project has been migrated to PostgreSQL. The server now uses the `pg` driver and will create required tables automatically when the service starts (if the DB user has the required privileges).
 
-1) Create a cloud MySQL (PlanetScale recommended)
+Recommended deployment flow on Render (using managed PostgreSQL):
 
-- Sign up at https://planetscale.com and create a new database.
-- After creation, open the **Connect** tab and choose the **Standard (MySQL)** connection.
-- Choose the region closest to your Render service. Copy the connection details (host, port, username, password, database).
+1) Create a Render Managed PostgreSQL database
 
-Notes for PlanetScale:
-- PlanetScale uses a `username` and a password you create (or generate). They may provide a full connection string — extract host, port (usually 3306), user, password, and database name.
-- If a provider requires special SSL flags, Render can still use them by setting env vars and configuring the connection in `server.js` if needed.
+- In Render dashboard, go to **Databases** → **Create PostgreSQL** (choose the smallest or free tier if available).
+- Pick a name (e.g., `gids-db`) and region close to your app. Create the database.
+- Once created, open the DB and copy connection details: host, port (usually 5432), database, user, password.
 
-2) Add environment variables to Render (do not commit secrets)
+2) Add environment variables to your Render Web Service
 
-- Create a new Web Service in Render and connect it to the GitHub repo `GIDS-WEB1` (branch `main`).
-- In Render service settings, set the Environment to `Node` and supply:
+- Create or open your Web Service connected to the `GIDS-WEB1` repo (branch `main`).
+- Set the following Environment Variables in the Render service settings:
 
-  - `DB_HOST` = (from provider)
-  - `DB_PORT` = 3306
-  - `DB_USER` = (from provider)
-  - `DB_PASSWORD` = (from provider)
-  - `DB_NAME` = (from provider)
+  - `DB_HOST` = host from Render DB
+  - `DB_PORT` = 5432
+  - `DB_USER` = DB user
+  - `DB_PASSWORD` = DB password
+  - `DB_NAME` = database name
   - `EMAIL_USER` = your sending email (Gmail recommended)
-  - `EMAIL_PASS` = Gmail app password
+  - `EMAIL_PASS` = Gmail app password (app password)
   - `JWT_SECRET` = a strong secret string
 
 3) Render service settings
@@ -33,30 +31,23 @@ Notes for PlanetScale:
 - Branch: `main`
 - Root directory: repository root
 
-4) Database initialization
+4) Deploy and test
 
-- `server.js` will attempt to create the database and tables if permitted by the DB user. For managed providers, create the database in the provider console first and use those credentials.
-
-5) Deploy and test
-
-- Deploy the service from Render. Watch the build logs for errors.
-- Test the site URL that Render provides:
+- Deploy the service. Watch logs for database connection messages.
+- Visit the provided service URL and test:
   - Homepage loads
-  - POST `/api/contact` (book consultation) works
-  - POST `/api/enroll` works
+  - POST `/api/contact` (book consultation)
+  - POST `/api/enroll`
 
-6) Troubleshooting
+5) If you prefer an external provider (Aiven, Railway, AWS RDS)
 
-- If you see connection errors, check:
-  - Env vars are correct and available to the service
-  - Provider allows connections from Render (some providers block unknown origins — use a managed DB or whitelist Render IP ranges if needed)
-  - Check Render logs for stack traces
+- You can create a PostgreSQL instance on any provider and supply the connection details in Render env vars. Ensure network access from Render to that DB.
 
-7) Security notes
+6) Security notes
 
 - Keep `.env` out of git (already in `.gitignore`).
-- Use a strong `JWT_SECRET` and a Gmail App Password for `EMAIL_PASS` if using Gmail.
+- Use a strong `JWT_SECRET` and secure email app passwords.
 
-If you want, I can:
-- Walk you through creating the PlanetScale database now (I will provide exact clicks/values), or
-- Create the Render service steps and a checklist and then guide you to add the env vars.
+If you want, I can now:
+- walk you through creating a Render Postgres DB and setting env vars, or
+- convert the SQL in `database/schema.sql` to a Postgres-compatible file and add it to the repo.
