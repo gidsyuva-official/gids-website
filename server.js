@@ -152,21 +152,18 @@ let emailConfigured = false;
 try {
   transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true,
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    },
-    tls: {
-      rejectUnauthorized: false
+      user: (process.env.EMAIL_USER || '').trim(),
+      pass: (process.env.EMAIL_PASS || '').trim()
     }
   });
 
   transporter.verify((verifyErr, success) => {
     if (verifyErr) {
-      console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
-      console.warn('   Check EMAIL_USER and EMAIL_PASS in .env and use a valid Gmail app password.');
+      console.warn('⚠️ Nodemailer verification failed:', verifyErr);
+      console.warn('   Check EMAIL_USER and EMAIL_PASS in Render environment settings and use a valid Gmail app password.');
       emailConfigured = false;
     } else {
       console.log('✅ Nodemailer configured and ready to send email');
@@ -175,7 +172,7 @@ try {
   });
 } catch (err) {
   console.warn('⚠️ Nodemailer not configured - verification emails will not work');
-  console.warn(err.message);
+  console.warn(err);
   emailConfigured = false;
 }
 
@@ -416,8 +413,9 @@ app.post('/api/signup', async (req, res) => {
     const expiresMinutes = Number(process.env.VERIFY_LINK_EXPIRES_MINUTES) || 15;
     const expiresAt = new Date(Date.now() + expiresMinutes * 60 * 1000);
 
-    // Generate magic link
-    const magicLink = `http://localhost:${PORT}/verify/${verificationToken}`;
+    // Generate magic link using deployed base URL if provided
+    const baseUrl = (process.env.BASE_URL || `${req.protocol}://${req.get('host')}`).trim();
+    const magicLink = `${baseUrl.replace(/\/$/, '')}/verify/${verificationToken}`;
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !transporter) {
       return res.status(500).json({
