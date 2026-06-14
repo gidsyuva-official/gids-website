@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gids-web
+    env: node
+    branch: main
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    # Environment variables should be set in the Render dashboard (do NOT store secrets in this file)
+    envVars: []
