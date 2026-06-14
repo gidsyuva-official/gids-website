@@ -145,15 +145,15 @@ async function initDatabase() {
   console.log(`✅ PostgreSQL connected — database: ${dbConfig.database}`);
 }
 
-// Email setup — using Resend HTTP API (no SMTP ports needed, works on Render free tier)
-const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
-const EMAIL_FROM = (process.env.EMAIL_FROM || 'onboarding@resend.dev').trim();
+// Email setup — using Brevo HTTP API (no SMTP ports needed, works on Render free tier)
+const BREVO_API_KEY = (process.env.BREVO_API_KEY || '').trim();
+const EMAIL_FROM = (process.env.EMAIL_FROM || '').trim();
 let emailConfigured = false;
-if (RESEND_API_KEY) {
+if (BREVO_API_KEY && EMAIL_FROM) {
   emailConfigured = true;
-  console.log('✅ Resend email configured and ready to send email');
+  console.log('✅ Brevo email configured and ready to send email');
 } else {
-  console.warn('⚠️ RESEND_API_KEY not set - verification emails will not work');
+  console.warn('⚠️ BREVO_API_KEY or EMAIL_FROM not set - verification emails will not work');
 }
 
 // Book a Consultation — POST /api/contact
@@ -397,7 +397,7 @@ app.post('/api/signup', async (req, res) => {
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
     const magicLink = `${baseUrl}/verify/${verificationToken}`;
 
-    if (!RESEND_API_KEY) {
+    if (!BREVO_API_KEY || !EMAIL_FROM) {
       return res.status(500).json({
         success: false,
         message: 'Email verification is not configured. Please contact the administrator to enable email delivery.'
@@ -414,29 +414,30 @@ app.post('/api/signup', async (req, res) => {
       `;
 
     try {
-      const resendRes = await fetch('https://api.resend.com/emails', {
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json'
+          'api-key': BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          from: `GIDS Verification <${EMAIL_FROM}>`,
-          to: [email],
+          sender: { name: 'GIDS Verification', email: EMAIL_FROM },
+          to: [{ email: email }],
           subject: 'Verify your GIDS account',
-          html: emailHtml,
-          text: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`
+          htmlContent: emailHtml,
+          textContent: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`
         })
       });
 
-      const resendData = await resendRes.json();
+      const brevoData = await brevoRes.json();
 
-      if (!resendRes.ok) {
-        throw new Error(resendData && resendData.message ? resendData.message : `Resend API error (status ${resendRes.status})`);
+      if (!brevoRes.ok) {
+        throw new Error(brevoData && brevoData.message ? brevoData.message : `Brevo API error (status ${brevoRes.status})`);
       }
 
       console.log(`📧 Verification email sent to ${email}`);
-      console.log('Mail send info:', JSON.stringify(resendData));
+      console.log('Mail send info:', JSON.stringify(brevoData));
     } catch (mailErr) {
       console.error('Verification email send failed:', mailErr);
       return res.status(500).json({
