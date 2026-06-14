@@ -1,7 +1,7 @@
 {
   "name": "global-india-digital-solution",
   "version": "1.0.0",
-  "description": "GIDS website with Node.js + MySQL backend",
+  "description": "GIDS website with Node.js + PostgreSQL backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,7 +13,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.12.0",
+    "pg": "^8.11.0",
     "nodemailer": "^6.10.1",
     "validator": "^13.12.0"
   }

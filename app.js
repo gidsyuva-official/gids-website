@@ -107,9 +107,7 @@ function updateNavActiveState(pageId) {
    AUTHENTICATION
    ───────────────────────────────────────── */
 
-// Hardcoded credentials as per requirements
-const VALID_USERNAME = 'gobi';
-const VALID_PASSWORD = '5050';
+// Temporary hardcoded credentials removed for security — use real accounts
 
 /**
  * Handle login form submission
