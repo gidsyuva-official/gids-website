@@ -8,7 +8,6 @@ const { Pool } = require('pg');
 const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
 const validator = require('validator');
 const crypto = require('crypto');
 
@@ -146,34 +145,15 @@ async function initDatabase() {
   console.log(`✅ PostgreSQL connected — database: ${dbConfig.database}`);
 }
 
-// Nodemailer setup
-let transporter;
+// Email setup — using Resend HTTP API (no SMTP ports needed, works on Render free tier)
+const RESEND_API_KEY = (process.env.RESEND_API_KEY || '').trim();
+const EMAIL_FROM = (process.env.EMAIL_FROM || 'onboarding@resend.dev').trim();
 let emailConfigured = false;
-try {
-  transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-      user: (process.env.EMAIL_USER || '').trim(),
-      pass: (process.env.EMAIL_PASS || '').trim()
-    }
-  });
-
-  transporter.verify((verifyErr, success) => {
-    if (verifyErr) {
-      console.warn('⚠️ Nodemailer verification failed:', verifyErr.message);
-      console.warn('   Check EMAIL_USER and EMAIL_PASS in .env and use a valid Gmail app password.');
-      emailConfigured = false;
-    } else {
-      console.log('✅ Nodemailer configured and ready to send email');
-      emailConfigured = true;
-    }
-  });
-} catch (err) {
-  console.warn('⚠️ Nodemailer not configured - verification emails will not work');
-  console.warn(err.message);
-  emailConfigured = false;
+if (RESEND_API_KEY) {
+  emailConfigured = true;
+  console.log('✅ Resend email configured and ready to send email');
+} else {
+  console.warn('⚠️ RESEND_API_KEY not set - verification emails will not work');
 }
 
 // Book a Consultation — POST /api/contact
@@ -417,45 +397,46 @@ app.post('/api/signup', async (req, res) => {
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
     const magicLink = `${baseUrl}/verify/${verificationToken}`;
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !transporter) {
+    if (!RESEND_API_KEY) {
       return res.status(500).json({
         success: false,
         message: 'Email verification is not configured. Please contact the administrator to enable email delivery.'
       });
     }
 
-    const mailOptions = {
-      from: `"GIDS Verification" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: 'Verify your GIDS account',
-      replyTo: process.env.EMAIL_USER,
-      text: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`,
-      html: `
+    const emailHtml = `
         <h1>Welcome to Global India Digital Solution!</h1>
         <p>Hi ${firstName || loginName},</p>
         <p>Click the link below to verify your account:</p>
         <a href="${magicLink}" style="font-size: 18px; padding: 10px 20px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 5px;">Verify Account</a>
         <p>This link expires in ${expiresMinutes} minutes.</p>
         <p>If you didn't create this account, you can ignore this email.</p>
-      `
-    };
+      `;
 
     try {
-      let sendInfo;
-      await new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (mailErr, info) => {
-          if (mailErr) {
-            return reject(mailErr);
-          }
-          if (info && info.rejected && info.rejected.length > 0) {
-            return reject(new Error(`Email rejected by SMTP server: ${info.rejected.join(', ')}`));
-          }
-          sendInfo = info;
-          resolve(info);
-        });
+      const resendRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: `GIDS Verification <${EMAIL_FROM}>`,
+          to: [email],
+          subject: 'Verify your GIDS account',
+          html: emailHtml,
+          text: `Welcome to Global India Digital Solution!\n\nHi ${firstName || loginName},\n\nClick the link below to verify your account:\n${magicLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't create this account, ignore this message.`
+        })
       });
+
+      const resendData = await resendRes.json();
+
+      if (!resendRes.ok) {
+        throw new Error(resendData && resendData.message ? resendData.message : `Resend API error (status ${resendRes.status})`);
+      }
+
       console.log(`📧 Verification email sent to ${email}`);
-      console.log('Mail send info:', sendInfo && typeof sendInfo === 'object' ? JSON.stringify(sendInfo) : sendInfo);
+      console.log('Mail send info:', JSON.stringify(resendData));
     } catch (mailErr) {
       console.error('Verification email send failed:', mailErr);
       return res.status(500).json({
