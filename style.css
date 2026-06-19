@@ -3830,7 +3830,16 @@ img, video, svg {
   .hamburger { display: flex; }
 
   /* ---- AD BANNER ---- */
-  .ad-banner { font-size: 0.72rem; padding: 7px 0; }
+  .ad-banner { 
+    font-size: 0.72rem; 
+    padding: 5px 0; 
+    height: auto;
+  }
+
+  /* Set explicit ad banner height variable for mobile */
+  :root {
+    --ad-banner-h: 30px;
+  }
 
   /* ---- SPLASH / LANDING ---- */
   .splash-fullscreen {
@@ -4067,7 +4076,15 @@ img, video, svg {
 
   .nav-links { width: 88%; padding: 70px 16px 28px; }
 
-  .ad-banner { font-size: 0.65rem; padding: 6px 0; }
+  .ad-banner { 
+    font-size: 0.65rem; 
+    padding: 4px 0; 
+  }
+
+  /* Set explicit ad banner height variable for small mobile */
+  :root {
+    --ad-banner-h: 28px;
+  }
 
   .splash-title { font-size: 1.5rem; }
   .splash-fullscreen { padding: 16px 12px; }

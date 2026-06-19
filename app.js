@@ -6,6 +6,22 @@
 'use strict';
 
 /* ─────────────────────────────────────────
+   SET AD BANNER HEIGHT DYNAMICALLY
+   ───────────────────────────────────────── */
+function setAdBannerHeight() {
+  const adBanner = document.querySelector('.ad-banner');
+  if (adBanner) {
+    const height = adBanner.offsetHeight;
+    document.documentElement.style.setProperty('--ad-banner-h', `${height}px`);
+  }
+}
+
+// Run on page load and window resize
+window.addEventListener('load', setAdBannerHeight);
+window.addEventListener('resize', setAdBannerHeight);
+setTimeout(setAdBannerHeight, 100); // Run after a short delay to ensure elements are rendered
+
+/* ─────────────────────────────────────────
    DISABLE RIGHT CLICK & INSPECT
    ───────────────────────────────────────── */
 document.addEventListener('contextmenu', function(e) {
