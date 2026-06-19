@@ -6,6 +6,51 @@
 'use strict';
 
 /* ─────────────────────────────────────────
+   DISABLE RIGHT CLICK & INSPECT
+   ───────────────────────────────────────── */
+document.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});
+
+document.addEventListener('keydown', function(e) {
+  // Disable Ctrl+U (view source)
+  if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+  // Disable F12 and Ctrl+Shift+I/J/C (inspect shortcuts)
+  if (
+    e.key === 'F12' ||
+    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c'))
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+  // Disable Ctrl+S (save)
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+  // Disable Ctrl+P (print)
+  if (e.ctrlKey && (e.key === 'p' || e.key === 'P')) {
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  }
+});
+
+// Disable drag & drop
+document.addEventListener('dragstart', function(e) {
+  e.preventDefault();
+  return false;
+});
+
+/* ─────────────────────────────────────────
    PAGE ROUTING SYSTEM
    ───────────────────────────────────────── */
 
