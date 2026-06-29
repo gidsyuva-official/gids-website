@@ -599,7 +599,7 @@ input, select, textarea {
 /* ─────────────────────────────────────────
    AUTH PAGES (Login & Signup)
    ───────────────────────────────────────── */
-#page-login, #page-signup {
+#page-login, #page-signup, #page-forgot-password {
   background-image: url('assets/login-bg.jpeg');
   background-size: cover;
   background-position: center;
@@ -610,7 +610,7 @@ input, select, textarea {
   justify-content: center;
 }
 
-#page-login.active, #page-signup.active {
+#page-login.active, #page-signup.active, #page-forgot-password.active {
   display: flex !important;
 }
 
