@@ -165,6 +165,69 @@ function updateNavActiveState(pageId) {
 }
 
 /* ─────────────────────────────────────────
+   FORGOT PASSWORD
+   ───────────────────────────────────────── */
+
+/**
+ * Handle forgot password form submission
+ */
+async function handleForgotPassword() {
+  const email = document.getElementById('forgot-email').value.trim();
+  const errorEl = document.getElementById('forgot-error');
+  const successEl = document.getElementById('forgot-success');
+  const formEl = document.getElementById('forgot-form');
+  const btn = document.querySelector('#page-forgot-password .auth-btn');
+
+  errorEl.classList.add('hidden');
+  successEl.classList.add('hidden');
+
+  if (!email) {
+    errorEl.textContent = 'Please enter your email address.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    errorEl.textContent = 'Please enter a valid email address.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch('/api/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json();
+
+    btn.textContent = 'Send Reset Link →';
+    btn.disabled = false;
+
+    if (data.success) {
+      successEl.innerHTML = `<strong>${data.message}</strong>
+        <div style="margin-top:10px;font-size:0.9rem;color:#1f2937;">
+          Please check your inbox (and spam folder) for the password reset email.
+        </div>`;
+      successEl.classList.remove('hidden');
+      document.getElementById('forgot-email').value = '';
+    } else {
+      errorEl.textContent = data.message || 'Failed to send reset link. Please try again.';
+      errorEl.classList.remove('hidden');
+    }
+  } catch (err) {
+    btn.textContent = 'Send Reset Link →';
+    btn.disabled = false;
+    errorEl.textContent = 'Could not connect to server. Please try again.';
+    errorEl.classList.remove('hidden');
+  }
+}
+
+/* ─────────────────────────────────────────
    AUTHENTICATION
    ───────────────────────────────────────── */
 

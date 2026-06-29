@@ -96,6 +96,10 @@
             </div>
           </div>
 
+          <div class="auth-forgot-row">
+            <a href="#" onclick="showPage('page-forgot-password');return false;" class="auth-link forgot-link">Forgot Password?</a>
+          </div>
+
           <div class="auth-tos">
             <input type="checkbox" id="login-tos" />
             <label for="login-tos">I agree to the <a href="#" class="tos-link">Terms & Conditions</a> and <a
@@ -118,6 +122,56 @@
     </div>
   </div>
 
+
+  <!-- ============================================================
+     PAGE 2 — FORGOT PASSWORD PAGE
+     ============================================================ -->
+  <div id="page-forgot-password" class="page">
+    <div class="auth-bg">
+      <div class="auth-bg-shape s1"></div>
+      <div class="auth-bg-shape s2"></div>
+    </div>
+    <div class="auth-wrapper auth-wrapper-split">
+      <!-- Left: Forgot Password Form -->
+      <div class="auth-panel">
+        <div class="auth-logo">
+          <div class="auth-logo-icon">
+            <img src="assets/gds-logo.png" alt="GDS Logo" class="gds-logo-img gds-logo-img--auth" />
+          </div>
+          <div class="auth-logo-text">
+            <span class="alm">Global India Digital Solution</span>
+            <span class="als">Education · Training · Business</span>
+          </div>
+        </div>
+
+        <h2 class="auth-heading">Forgot Password</h2>
+        <p class="auth-subheading">Enter your email and we'll send you a reset link</p>
+
+        <div id="forgot-error" class="auth-error hidden"></div>
+        <div id="forgot-success" class="auth-success hidden"></div>
+
+        <div class="auth-form" id="forgot-form">
+          <div class="field-group">
+            <label class="field-label">Email Address</label>
+            <input type="email" id="forgot-email" class="field-input" placeholder="your@email.com" />
+          </div>
+
+          <button class="btn-primary auth-btn" onclick="handleForgotPassword()">Send Reset Link →</button>
+
+          <p class="auth-switch">Remember your password? <a href="#" onclick="showPage('page-login')"
+              class="auth-link">Sign In</a></p>
+        </div>
+      </div>
+      
+      <!-- Right: Sidebar -->
+      <div class="auth-sidebar">
+        <div class="auth-sidebar-content">
+          <h1 class="auth-sidebar-text" style="font-size: 1.6rem;">Reset Your Password</h1>
+          <p style="color: rgba(255,255,255,0.8); margin-top: 12px; font-size: 0.95rem; line-height: 1.6;">We'll send a secure link to your email. Click it to set a new password and regain access to your account.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================
      PAGE 3 — SIGN UP PAGE

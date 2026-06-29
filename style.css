@@ -996,6 +996,17 @@ input, select, textarea {
   color: var(--text-light);
 }
 
+.auth-forgot-row {
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 4px;
+}
+
+.forgot-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 .auth-link {
   color: var(--red);
   font-weight: 600;

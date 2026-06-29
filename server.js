@@ -118,6 +118,8 @@ async function initDatabase() {
   await ensureColumnExists('users', 'first_name', 'VARCHAR(100)');
   await ensureColumnExists('users', 'last_name', 'VARCHAR(20)');
   await ensureColumnExists('users', 'login_name', 'VARCHAR(120)');
+  await ensureColumnExists('users', 'reset_token', 'TEXT');
+  await ensureColumnExists('users', 'reset_token_expires_at', 'TIMESTAMP');
   await ensureColumnExists('pending_users', 'first_name', 'VARCHAR(100)');
   await ensureColumnExists('pending_users', 'last_name', 'VARCHAR(20)');
   await ensureColumnExists('pending_users', 'login_name', 'VARCHAR(120)');
@@ -600,6 +602,369 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).json({ success: false, message: 'Server error. Could not process login.' });
+  }
+});
+
+// ============================================================
+// FORGOT PASSWORD — POST /api/forgot-password
+// ============================================================
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const email = (req.body.email || '').trim().toLowerCase();
+
+    if (!email || !validator.isEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
+    }
+
+    // Find user by email
+    const userRes = await pool.query('SELECT * FROM users WHERE LOWER(email) = $1', [email]);
+    const user = userRes.rows;
+
+    // Always return success to prevent email enumeration
+    if (user.length === 0) {
+      return res.json({ success: true, message: 'If an account with that email exists, a password reset link has been sent.' });
+    }
+
+    const foundUser = user[0];
+
+    // Generate secure reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresMinutes = Number(process.env.RESET_LINK_EXPIRES_MINUTES) || 15;
+    const expiresAt = new Date(Date.now() + expiresMinutes * 60 * 1000);
+
+    // Save reset token to user record
+    await pool.query(
+      'UPDATE users SET reset_token = $1, reset_token_expires_at = $2 WHERE id = $3',
+      [resetToken, expiresAt, foundUser.id]
+    );
+
+    if (!BREVO_API_KEY || !EMAIL_FROM) {
+      return res.status(500).json({
+        success: false,
+        message: 'Password reset email is not configured. Please contact the administrator.'
+      });
+    }
+
+    // Generate reset link
+    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const resetLink = `${baseUrl}/api/reset-password/${resetToken}`;
+
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1a1a8e;">Password Reset Request</h1>
+        <p>Hi ${foundUser.first_name || foundUser.login_name || 'User'},</p>
+        <p>We received a request to reset your password for your GIDS account.</p>
+        <p>Click the button below to set a new password:</p>
+        <a href="${resetLink}" style="display: inline-block; font-size: 16px; padding: 12px 28px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 6px; margin: 16px 0;">Reset Password</a>
+        <p style="color: #666;">This link expires in ${expiresMinutes} minutes.</p>
+        <p style="color: #666;">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
+        <p style="color: #999; font-size: 12px;">Global India Digital Solution — Education · Training · Business</p>
+      </div>
+    `;
+
+    try {
+      const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': BREVO_API_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { name: 'GIDS Support', email: EMAIL_FROM },
+          to: [{ email: email }],
+          subject: 'Reset Your GIDS Password',
+          htmlContent: emailHtml,
+          textContent: `Password Reset Request\n\nHi ${foundUser.first_name || foundUser.login_name || 'User'},\n\nWe received a request to reset your password for your GIDS account.\n\nClick the link below to set a new password:\n${resetLink}\n\nThis link expires in ${expiresMinutes} minutes.\n\nIf you didn't request a password reset, you can safely ignore this email.`
+        })
+      });
+
+      const brevoData = await brevoRes.json();
+
+      if (!brevoRes.ok) {
+        throw new Error(brevoData && brevoData.message ? brevoData.message : `Brevo API error (status ${brevoRes.status})`);
+      }
+
+      console.log(`📧 Password reset email sent to ${email}`);
+    } catch (mailErr) {
+      console.error('Password reset email send failed:', mailErr);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send password reset email. Please check email configuration and try again.'
+      });
+    }
+
+    res.json({ success: true, message: 'If an account with that email exists, a password reset link has been sent.' });
+
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ success: false, message: 'Server error. Could not process password reset request.' });
+  }
+});
+
+// ============================================================
+// RESET PASSWORD PAGE — GET /api/reset-password/:token
+// ============================================================
+app.get('/api/reset-password/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Find user with valid reset token
+    const userRes = await pool.query(
+      'SELECT id, first_name, login_name, email FROM users WHERE reset_token = $1 AND reset_token_expires_at > NOW()',
+      [token]
+    );
+    const user = userRes.rows;
+
+    if (user.length === 0) {
+      return res.send(`
+        <html>
+          <head>
+            <title>Reset Link Expired</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <style>
+              body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f5; }
+              .card { background: white; border-radius: 12px; padding: 40px; max-width: 440px; width: 90%; box-shadow: 0 4px 24px rgba(0,0,0,0.1); text-align: center; }
+              h1 { color: #dc2626; font-size: 1.5rem; margin-bottom: 12px; }
+              p { color: #555; line-height: 1.6; margin-bottom: 24px; }
+              a { display: inline-block; padding: 12px 28px; background: #1a1a8e; color: white; text-decoration: none; border-radius: 6px; font-size: 0.95rem; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h1>This reset link has expired</h1>
+              <p>Password reset links are valid for ${Number(process.env.RESET_LINK_EXPIRES_MINUTES) || 15} minutes only.</p>
+              <p>Please request a new password reset link.</p>
+              <a href="/">Go to Login</a>
+            </div>
+          </body>
+        </html>
+      `);
+    }
+
+    const foundUser = user[0];
+    const name = foundUser.first_name || foundUser.login_name || 'User';
+
+    // Show reset password form
+    res.send(`
+      <html>
+        <head>
+          <title>Reset Password — GIDS</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <style>
+            body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+            .card { background: white; border-radius: 16px; padding: 40px; max-width: 440px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+            .logo { text-align: center; margin-bottom: 20px; }
+            .logo h2 { color: #1a1a8e; margin: 0; font-size: 1.3rem; }
+            .logo p { color: #666; font-size: 0.8rem; margin: 4px 0 0; }
+            h1 { font-size: 1.4rem; color: #111; text-align: center; margin-bottom: 8px; }
+            p.sub { color: #555; text-align: center; font-size: 0.9rem; margin-bottom: 24px; }
+            .field-group { margin-bottom: 16px; }
+            label { display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 4px; }
+            input { width: 100%; padding: 12px 14px; border: 2px solid #d1d5db; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; transition: border-color 0.2s; }
+            input:focus { outline: none; border-color: #1a1a8e; }
+            .pw-wrap { position: relative; }
+            .pw-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 4px; }
+            .btn { width: 100%; padding: 14px; background: #1a1a8e; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+            .btn:hover { background: #14147a; }
+            .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+            .error { background: #fef2f2; color: #dc2626; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; display: none; }
+            .success { background: #f0fdf4; color: #16a34a; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; display: none; text-align: center; }
+            .hidden { display: none; }
+            .login-link { text-align: center; margin-top: 20px; font-size: 0.85rem; }
+            .login-link a { color: #1a1a8e; text-decoration: none; font-weight: 600; }
+            .strength-bar { height: 4px; border-radius: 2px; margin-top: 4px; transition: all 0.2s; width: 0%; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <div class="logo">
+              <h2>Global India Digital Solution</h2>
+              <p>Education · Training · Business</p>
+            </div>
+            <h1>Set New Password</h1>
+            <p class="sub">Hi ${name}, enter your new password below.</p>
+
+            <div id="reset-error" class="error"></div>
+            <div id="reset-success" class="success">✅ Password updated successfully! Redirecting to login...</div>
+
+            <div id="reset-form">
+              <div class="field-group">
+                <label>New Password</label>
+                <div class="pw-wrap">
+                  <input type="password" id="new-password" placeholder="Enter new password" oninput="checkStrength(this)" />
+                  <button class="pw-toggle" onclick="togglePw('new-password', this)">👁</button>
+                </div>
+                <div id="strength-bar" class="strength-bar"></div>
+                <div id="strength-text" style="font-size:0.75rem;color:#666;margin-top:4px;"></div>
+              </div>
+              <div class="field-group">
+                <label>Confirm Password</label>
+                <div class="pw-wrap">
+                  <input type="password" id="confirm-password" placeholder="Repeat new password" />
+                  <button class="pw-toggle" onclick="togglePw('confirm-password', this)">👁</button>
+                </div>
+              </div>
+              <button class="btn" id="reset-btn" onclick="handleResetPassword()">Update Password →</button>
+            </div>
+
+            <div class="login-link">
+              <a href="/">← Back to Login</a>
+            </div>
+          </div>
+
+          <script>
+            const RESET_TOKEN = ${JSON.stringify(token)};
+
+            function togglePw(inputId, btn) {
+              const input = document.getElementById(inputId);
+              if (!input) return;
+              if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🔒';
+              } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+              }
+            }
+
+            function checkStrength(input) {
+              const val = input.value;
+              const bar = document.getElementById('strength-bar');
+              const text = document.getElementById('strength-text');
+              let strength = 0;
+              if (val.length >= 6) strength += 25;
+              if (val.length >= 10) strength += 25;
+              if (/[A-Z]/.test(val)) strength += 20;
+              if (/[0-9]/.test(val)) strength += 15;
+              if (/[^A-Za-z0-9]/.test(val)) strength += 15;
+              bar.style.width = Math.min(strength, 100) + '%';
+              if (strength < 30) { bar.style.background = '#dc2626'; text.textContent = 'Weak'; text.style.color = '#dc2626'; }
+              else if (strength < 60) { bar.style.background = '#f59e0b'; text.textContent = 'Medium'; text.style.color = '#f59e0b'; }
+              else if (strength < 85) { bar.style.background = '#16a34a'; text.textContent = 'Strong'; text.style.color = '#16a34a'; }
+              else { bar.style.background = '#059669'; text.textContent = 'Very Strong'; text.style.color = '#059669'; }
+              if (!val) { bar.style.width = '0%'; text.textContent = ''; }
+            }
+
+            async function handleResetPassword() {
+              const password = document.getElementById('new-password').value;
+              const confirm = document.getElementById('confirm-password').value;
+              const errorEl = document.getElementById('reset-error');
+              const successEl = document.getElementById('reset-success');
+              const formEl = document.getElementById('reset-form');
+              const btn = document.getElementById('reset-btn');
+
+              errorEl.style.display = 'none';
+              successEl.style.display = 'none';
+
+              if (!password || !confirm) {
+                errorEl.textContent = 'Please fill in both password fields.';
+                errorEl.style.display = 'block';
+                return;
+              }
+
+              if (password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters.';
+                errorEl.style.display = 'block';
+                return;
+              }
+
+              if (password !== confirm) {
+                errorEl.textContent = 'Passwords do not match.';
+                errorEl.style.display = 'block';
+                return;
+              }
+
+              btn.textContent = 'Updating...';
+              btn.disabled = true;
+
+              try {
+                const response = await fetch('/api/reset-password', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: RESET_TOKEN, password, confirmPassword: confirm })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                  successEl.style.display = 'block';
+                  formEl.style.display = 'none';
+                  setTimeout(() => {
+                    window.location.href = '/';
+                  }, 3000);
+                } else {
+                  errorEl.textContent = data.message || 'Failed to reset password. Please try again.';
+                  errorEl.style.display = 'block';
+                  btn.textContent = 'Update Password →';
+                  btn.disabled = false;
+                }
+              } catch (err) {
+                errorEl.textContent = 'Could not connect to server. Please try again.';
+                errorEl.style.display = 'block';
+                btn.textContent = 'Update Password →';
+                btn.disabled = false;
+              }
+            }
+          </script>
+        </body>
+      </html>
+    `);
+
+  } catch (err) {
+    console.error('Reset password page error:', err.message);
+    res.status(500).send('<h1>Server Error</h1><p>Something went wrong. Please try again.</p>');
+  }
+});
+
+// ============================================================
+// RESET PASSWORD — POST /api/reset-password
+// ============================================================
+app.post('/api/reset-password', async (req, res) => {
+  try {
+    const { token, password, confirmPassword } = req.body;
+
+    if (!token || !password || !confirmPassword) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters.' });
+    }
+
+    // Find user with valid reset token
+    const userRes = await pool.query(
+      'SELECT id, email FROM users WHERE reset_token = $1 AND reset_token_expires_at > NOW()',
+      [token]
+    );
+    const user = userRes.rows;
+
+    if (user.length === 0) {
+      return res.status(400).json({ success: false, message: 'This reset link has expired. Please request a new one.' });
+    }
+
+    const foundUser = user[0];
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update password and clear reset token
+    await pool.query(
+      'UPDATE users SET password = $1, reset_token = NULL, reset_token_expires_at = NULL WHERE id = $2',
+      [hashedPassword, foundUser.id]
+    );
+
+    console.log(`🔐 Password reset successful for user ${foundUser.email}`);
+
+    res.json({ success: true, message: 'Password updated successfully!' });
+
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.status(500).json({ success: false, message: 'Server error. Could not reset password.' });
   }
 });
 
